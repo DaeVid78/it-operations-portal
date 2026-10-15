@@ -95,19 +95,15 @@
     .check-icon-box { width: 50px; height: 50px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
     .circle-arrow { width: 34px; height: 34px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; margin: 14px auto 0; }
 
-    /* DUAL PLATFORM CCTV LAUNCHER BAR */
-    .apk-launcher-bar { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 12px; }
-    .apk-header-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-    .apk-cards-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .apk-item-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .apk-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; color: #fff; border: none; cursor: pointer; font-family: inherit; }
-    .apk-btn:hover { opacity: 0.92; }
+    /* NATIVE APK + EXE LAUNCHER BAR */
+    .apk-launcher-bar { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .apk-btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .apk-btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: #fff; border: none; cursor: pointer; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.12s; }
+    .apk-btn:hover { transform: translateY(-1px); opacity: 0.95; }
     .apk-seetong { background: #0284c7; }
     .apk-imou    { background: #ea580c; }
     .apk-hik     { background: #dc2626; }
-    .apk-web     { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-weight: 600; }
-    .apk-web:hover { background: #e2e8f0; }
-    .apk-pc      { background: #334155; font-size: 11.5px; }
+    .apk-pc      { background: #334155; font-size: 12px; }
 
     .form-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; }
     .form-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; margin-bottom: 12px; font-size: 13.5px; }
@@ -132,7 +128,7 @@
 
     .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 50; }
     .modal-card { background: #fff; border-radius: 14px; width: 100%; max-width: 480px; padding: 22px; }
-    @media (max-width: 1024px) { .stats-grid, .dash-lower-grid, .check-cards-grid, .form-grid, .apk-cards-row { grid-template-columns: 1fr; } }
+    @media (max-width: 1024px) { .stats-grid, .dash-lower-grid, .check-cards-grid, .form-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -254,59 +250,30 @@
         </div>
       </section>
 
-      <!-- 3. CCTV CHECK FORM (WITH PHONE + LAPTOP DUAL LAUNCHER) -->
+      <!-- 3. CCTV CHECK FORM (NATIVE APK + .EXE LAUNCHER ONLY) -->
       <section id="view-cctv-form" class="hidden">
         <div class="apk-launcher-bar">
-          <div class="apk-header-row">
-            <div>
-              <div style="font-size:13.5px;font-weight:700;">
-                <i class="fa-solid fa-laptop-mobile" style="color:#059669;margin-right:6px;"></i>CCTV Launcher (ဖုန်း နှင့် Laptop နှစ်မျိုးလုံးအတွက်)
-              </div>
-              <div style="font-size:11.5px;color:#64748b;">
-                <b>Open App</b> သည် ဖုန်း APK သို့မဟုတ် Laptop Software (.exe) ကို ဖွင့်ပေးပြီး၊ <b>Web</b> သည် Browser ဖြင့် တိုက်ရိုက်ဖွင့်ပေးသည်
-              </div>
+          <div>
+            <div style="font-size:13.5px;font-weight:700;">
+              <i class="fa-solid fa-laptop-mobile" style="color:#059669;margin-right:6px;"></i>Open CCTV Software (ဖုန်း APK / Laptop .EXE တိုက်ရိုက်ဖွင့်ရန်)
             </div>
-            <button type="button" onclick="downloadPCAutoSetupBat()" class="apk-btn apk-pc" title="Windows Laptop တွင် CCTV Software (.exe) များ တိုက်ရိုက်ပွင့်စေရန် တစ်ကြိမ် Run ပေးပါ">
-              <i class="fa-brands fa-windows"></i> Laptop App Enabler (.bat)
-            </button>
+            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">
+              ဖုန်းဖြင့်နှိပ်လျှင် APK ပွင့်ပြီး၊ Laptop ဖြင့်နှိပ်လျှင် `.exe` ပွင့်ပါမည် (Laptop တွင် ပထမဆုံးအကြိမ် <b>.EXE Enabler</b> ကို တစ်ကြိမ် Run ပေးပါ)
+            </div>
           </div>
-
-          <div class="apk-cards-row">
-            <!-- Seetong -->
-            <div class="apk-item-card">
-              <div>
-                <div style="font-weight:700;font-size:13px;color:#0284c7;"><i class="fa-solid fa-video"></i> Seetong</div>
-                <div style="font-size:10.5px;color:#64748b;">Phone APK & PC Client</div>
-              </div>
-              <div style="display:flex;gap:5px;">
-                <button type="button" onclick="launchCCTV('seetong', 'app')" class="apk-btn apk-seetong">Open App</button>
-                <button type="button" onclick="launchCCTV('seetong', 'web')" class="apk-btn apk-web" title="Open in Browser">Web</button>
-              </div>
-            </div>
-
-            <!-- IMOU -->
-            <div class="apk-item-card">
-              <div>
-                <div style="font-weight:700;font-size:13px;color:#ea580c;"><i class="fa-solid fa-camera"></i> IMOU Life</div>
-                <div style="font-size:10.5px;color:#64748b;">Phone APK & PC Client</div>
-              </div>
-              <div style="display:flex;gap:5px;">
-                <button type="button" onclick="launchCCTV('imou', 'app')" class="apk-btn apk-imou">Open App</button>
-                <button type="button" onclick="launchCCTV('imou', 'web')" class="apk-btn apk-web" title="Open in Browser">Web</button>
-              </div>
-            </div>
-
-            <!-- Hik-Connect -->
-            <div class="apk-item-card">
-              <div>
-                <div style="font-weight:700;font-size:13px;color:#dc2626;"><i class="fa-solid fa-shield-halved"></i> Hik-Connect</div>
-                <div style="font-size:10.5px;color:#64748b;">Phone APK & iVMS-4200</div>
-              </div>
-              <div style="display:flex;gap:5px;">
-                <button type="button" onclick="launchCCTV('hikconnect', 'app')" class="apk-btn apk-hik">Open App</button>
-                <button type="button" onclick="launchCCTV('hikconnect', 'web')" class="apk-btn apk-web" title="Open in Browser">Web</button>
-              </div>
-            </div>
+          <div class="apk-btn-group">
+            <button type="button" onclick="launchNativeApp('seetong')" class="apk-btn apk-seetong">
+              <i class="fa-solid fa-video"></i> Open Seetong
+            </button>
+            <button type="button" onclick="launchNativeApp('imou')" class="apk-btn apk-imou">
+              <i class="fa-solid fa-camera"></i> Open IMOU
+            </button>
+            <button type="button" onclick="launchNativeApp('hikconnect')" class="apk-btn apk-hik">
+              <i class="fa-solid fa-shield-halved"></i> Open Hik-Connect
+            </button>
+            <button type="button" onclick="downloadPCExeEnablerBat()" class="apk-btn apk-pc" title="Windows Laptop တွင် .exe ဖိုင်များ တိုက်ရိုက်ပွင့်စေရန် တစ်ကြိမ် Run ပေးပါ">
+              <i class="fa-brands fa-windows"></i> 1-Click Laptop .EXE Enabler (.bat)
+            </button>
           </div>
         </div>
 
@@ -501,15 +468,15 @@
           </div>
 
           <div class="panel">
-            <h3 class="panel-title" style="margin-bottom:6px;">Phone & Laptop CCTV Settings</h3>
-            <p style="font-size:12px;color:#64748b;margin-bottom:12px;">ဖုန်း APK Package များနှင့် Laptop Browser မှ တိုက်ရိုက်ဖွင့်မည့် Web / NVR IP URL များ—</p>
-            <div class="form-row"><label>Hik-Connect (Phone)</label><input id="pkg-hik" type="text" value="com.connect.enduser" class="form-control"></div>
-            <div class="form-row"><label>Hik-Connect (Laptop URL)</label><input id="web-hik" type="text" value="https://www.hik-connect.com" placeholder="or http://192.168.1.64" class="form-control"></div>
-            <div class="form-row"><label>Seetong (Laptop URL)</label><input id="web-seetong" type="text" value="https://www.seetong.com" placeholder="or http://192.168.1.100" class="form-control"></div>
-            <div class="form-row"><label>IMOU (Laptop URL)</label><input id="web-imou" type="text" value="https://www.imoulife.com" class="form-control"></div>
-            <div style="display:flex;gap:8px;margin-top:10px;">
-              <button onclick="saveAppConfig()" class="btn btn-primary">Save CCTV Settings</button>
-              <button onclick="downloadPCAutoSetupBat()" class="btn btn-outline"><i class="fa-brands fa-windows"></i> Download Laptop App Setup (.bat)</button>
+            <h3 class="panel-title" style="margin-bottom:6px;">Phone APK & Laptop .EXE File Paths</h3>
+            <p style="font-size:12px;color:#64748b;margin-bottom:12px;">Laptop ရှိ `.exe` လမ်းကြောင်းများကို စစ်ဆေးပြီး <b>Download .EXE Enabler (.bat)</b> ကို ဆွဲ၍ တစ်ကြိမ် Run ပေးပါ—</p>
+            <div class="form-row"><label>Seetong (.exe Path)</label><input id="exe-seetong" type="text" value="C:\Program Files (x86)\Seetong\Seetong.exe" class="form-control"></div>
+            <div class="form-row"><label>IMOU (.exe Path)</label><input id="exe-imou" type="text" value="C:\Program Files (x86)\Imou\Imou.exe" class="form-control"></div>
+            <div class="form-row"><label>Hik-Connect (.exe)</label><input id="exe-hik" type="text" value="C:\Program Files (x86)\Hikvision\iVMS-4200 Site\iVMS-4200 Client\Client\iVMS-4200.Framework.C.exe" class="form-control"></div>
+            <div class="form-row"><label>Hik Android Package</label><input id="pkg-hik" type="text" value="com.connect.enduser" class="form-control"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+              <button onclick="saveAppConfig()" class="btn btn-primary">Save Paths</button>
+              <button onclick="downloadPCExeEnablerBat()" class="btn btn-outline"><i class="fa-brands fa-windows"></i> Download .EXE Enabler (.bat)</button>
             </div>
           </div>
         </div>
@@ -550,7 +517,7 @@
   </div>
 
   <script>
-    const DB_SCHEMA_VERSION = 'v9_dual_cctv_2026';
+    const DB_SCHEMA_VERSION = 'v10_native_exe_apk_2026';
     const defaultDB = {
       schemaVersion: DB_SCHEMA_VERSION,
       users: [
@@ -579,108 +546,98 @@
     let cctvImages = [], netImages = [], taskFilter = 'All', incFilter = 'All';
     let monthlyChartInstance = null, kpiChartInstance = null;
 
-    // --- DUAL PLATFORM (PHONE + LAPTOP) CCTV LAUNCHER ---
+    // --- NATIVE PHONE APK & LAPTOP .EXE LAUNCHER (NO WEB FALLBACK) ---
     function saveAppConfig() {
       localStorage.setItem('cctv_app_cfg', JSON.stringify({
         hik: document.getElementById('pkg-hik').value.trim(),
-        webHik: document.getElementById('web-hik').value.trim(),
-        webSeetong: document.getElementById('web-seetong').value.trim(),
-        webImou: document.getElementById('web-imou').value.trim()
+        exeSeetong: document.getElementById('exe-seetong').value.trim(),
+        exeImou: document.getElementById('exe-imou').value.trim(),
+        exeHik: document.getElementById('exe-hik').value.trim()
       }));
-      alert('CCTV Phone & Laptop Settings Saved!');
+      alert('Saved! Laptop အတွက် Download .EXE Enabler (.bat) ကို နှိပ်ပြီး Run ပေးပါ။');
     }
 
-    function launchCCTV(appKey, mode) {
+    function launchNativeApp(appKey) {
       const saved = JSON.parse(localStorage.getItem('cctv_app_cfg') || '{}');
-      const config = {
+      const apps = {
         seetong: {
           androidPkg: 'com.seetong.app',
           iosScheme: 'seetong://',
-          pcProtocol: 'seetong://',
-          webUrl: saved.webSeetong || 'https://www.seetong.com'
+          pcProtocol: 'seetong://'
         },
         imou: {
           androidPkg: 'com.mm.android.lc',
           iosScheme: 'imoulife://',
-          pcProtocol: 'imoulife://',
-          webUrl: saved.webImou || 'https://www.imoulife.com'
+          pcProtocol: 'imoulife://'
         },
         hikconnect: {
           androidPkg: saved.hik || 'com.connect.enduser',
           iosScheme: 'hikconnect://',
-          pcProtocol: 'hikconnect://',
-          webUrl: saved.webHik || 'https://www.hik-connect.com'
+          pcProtocol: 'hikconnect://'
         }
-      }[appKey];
+      };
 
-      if (!config) return;
+      const target = apps[appKey];
+      if (!target) return;
 
-      // Mode 1: Direct Web / NVR Browser View (Works on any Laptop without setup)
-      if (mode === 'web') {
-        window.open(config.webUrl, '_blank');
-        return;
-      }
-
-      // Mode 2: Native App Launch (Phone APK or Laptop Desktop .exe)
       const ua = navigator.userAgent || '';
       const isAndroid = /Android/i.test(ua);
       const isIOS = /iPhone|iPad|iPod/i.test(ua);
 
       if (isAndroid) {
-        window.location.href = `intent://#Intent;package=${config.androidPkg};end`;
+        // Launches the installed Android APK directly
+        window.location.href = `intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${target.androidPkg};end`;
       } else if (isIOS) {
-        window.location.href = config.iosScheme;
+        window.location.href = target.iosScheme;
       } else {
-        // Laptop (Windows/Mac): Trigger custom desktop protocol (registered via Laptop App Enabler .bat)
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = config.pcProtocol;
-        document.body.appendChild(iframe);
-        setTimeout(() => document.body.removeChild(iframe), 1500);
+        // Launches the installed Windows .EXE on Laptop via custom protocol handler
+        window.location.href = target.pcProtocol;
       }
     }
 
-    // Auto-detects installed CCTV software on Windows Laptop and registers browser protocol links
-    function downloadPCAutoSetupBat() {
+    // Generates a smart Windows Batch script that links the exact .EXE paths to browser buttons
+    function downloadPCExeEnablerBat() {
+      const seetongExe = document.getElementById('exe-seetong')?.value.trim() || 'C:\\Program Files (x86)\\Seetong\\Seetong.exe';
+      const imouExe = document.getElementById('exe-imou')?.value.trim() || 'C:\\Program Files (x86)\\Imou\\Imou.exe';
+      const hikExe = document.getElementById('exe-hik')?.value.trim() || 'C:\\Program Files (x86)\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe';
+
       const batLines = [
         '@echo off',
         'echo ==========================================================',
-        'echo   IT Operations Portal - Laptop CCTV App Enabler',
+        'echo   IT Operations Portal - Laptop .EXE Direct Launcher',
         'echo ==========================================================',
-        'echo Registering Seetong, IMOU, and Hik-Connect (iVMS-4200)...',
         '',
-        ':: 1. Find & Register Seetong PC',
-        'set "SEETONG_PATH=C:\\Seetong\\Seetong.exe"',
-        'if exist "%LOCALAPPDATA%\\Programs\\Seetong\\Seetong.exe" set "SEETONG_PATH=%LOCALAPPDATA%\\Programs\\Seetong\\Seetong.exe"',
-        'if exist "C:\\Program Files (x86)\\Seetong\\Seetong.exe" set "SEETONG_PATH=C:\\Program Files (x86)\\Seetong\\Seetong.exe"',
-        'reg add "HKCU\\Software\\Classes\\seetong" /ve /d "URL:Seetong Protocol" /f >nul',
+        `set "SEETONG_EXE=${seetongExe}"`,
+        'if exist "C:\\Seetong\\Seetong.exe" set "SEETONG_EXE=C:\\Seetong\\Seetong.exe"',
+        'if exist "%LOCALAPPDATA%\\Programs\\Seetong\\Seetong.exe" set "SEETONG_EXE=%LOCALAPPDATA%\\Programs\\Seetong\\Seetong.exe"',
+        'reg add "HKCU\\Software\\Classes\\seetong" /ve /d "URL:Seetong EXE" /f >nul',
         'reg add "HKCU\\Software\\Classes\\seetong" /v "URL Protocol" /d "" /f >nul',
-        'reg add "HKCU\\Software\\Classes\\seetong\\shell\\open\\command" /ve /d "\\"%SEETONG_PATH%\\"" /f >nul',
+        'reg add "HKCU\\Software\\Classes\\seetong\\shell\\open\\command" /ve /d "\\"%SEETONG_EXE%\\"" /f >nul',
         '',
-        ':: 2. Find & Register IMOU / SmartPSS PC',
-        'set "IMOU_PATH=C:\\Program Files (x86)\\Imou\\Imou.exe"',
-        'if exist "%LOCALAPPDATA%\\Programs\\Imou\\Imou.exe" set "IMOU_PATH=%LOCALAPPDATA%\\Programs\\Imou\\Imou.exe"',
-        'if exist "C:\\Program Files (x86)\\SmartPSS\\SmartPSS.exe" set "IMOU_PATH=C:\\Program Files (x86)\\SmartPSS\\SmartPSS.exe"',
-        'reg add "HKCU\\Software\\Classes\\imoulife" /ve /d "URL:IMOU Protocol" /f >nul',
+        `set "IMOU_EXE=${imouExe}"`,
+        'if exist "%LOCALAPPDATA%\\Programs\\Imou\\Imou.exe" set "IMOU_EXE=%LOCALAPPDATA%\\Programs\\Imou\\Imou.exe"',
+        'reg add "HKCU\\Software\\Classes\\imoulife" /ve /d "URL:IMOU EXE" /f >nul',
         'reg add "HKCU\\Software\\Classes\\imoulife" /v "URL Protocol" /d "" /f >nul',
-        'reg add "HKCU\\Software\\Classes\\imoulife\\shell\\open\\command" /ve /d "\\"%IMOU_PATH%\\"" /f >nul',
+        'reg add "HKCU\\Software\\Classes\\imoulife\\shell\\open\\command" /ve /d "\\"%IMOU_EXE%\\"" /f >nul',
         '',
-        ':: 3. Find & Register Hikvision iVMS-4200 / Hik-Connect PC',
-        'set "HIK_PATH=C:\\Program Files (x86)\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe"',
-        'if exist "C:\\Program Files\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe" set "HIK_PATH=C:\\Program Files\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe"',
-        'reg add "HKCU\\Software\\Classes\\hikconnect" /ve /d "URL:Hik-Connect Protocol" /f >nul',
+        `set "HIK_EXE=${hikExe}"`,
+        'if exist "C:\\Program Files\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe" set "HIK_EXE=C:\\Program Files\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe"',
+        'reg add "HKCU\\Software\\Classes\\hikconnect" /ve /d "URL:Hik-Connect EXE" /f >nul',
         'reg add "HKCU\\Software\\Classes\\hikconnect" /v "URL Protocol" /d "" /f >nul',
-        'reg add "HKCU\\Software\\Classes\\hikconnect\\shell\\open\\command" /ve /d "\\"%HIK_PATH%\\"" /f >nul',
+        'reg add "HKCU\\Software\\Classes\\hikconnect\\shell\\open\\command" /ve /d "\\"%HIK_EXE%\\"" /f >nul',
         '',
         'echo.',
-        'echo [SUCCESS] Laptop CCTV App links registered successfully!',
-        'echo You can now click "Open App" inside the Portal from your Laptop.',
+        'echo [SUCCESS] .EXE paths linked successfully!',
+        'echo - Seetong: %SEETONG_EXE%',
+        'echo - IMOU:    %IMOU_EXE%',
+        'echo - Hik:     %HIK_EXE%',
+        'echo.',
         'pause'
       ].join('\r\n');
 
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([batLines], { type: 'application/octet-stream' }));
-      a.download = 'Laptop-CCTV-App-Enabler.bat';
+      a.download = 'Enable-Laptop-CCTV-EXE.bat';
       a.click();
     }
 
@@ -1229,9 +1186,9 @@
 
       const appCfg = JSON.parse(localStorage.getItem('cctv_app_cfg') || '{}');
       if (appCfg.hik) document.getElementById('pkg-hik').value = appCfg.hik;
-      if (appCfg.webHik) document.getElementById('web-hik').value = appCfg.webHik;
-      if (appCfg.webSeetong) document.getElementById('web-seetong').value = appCfg.webSeetong;
-      if (appCfg.webImou) document.getElementById('web-imou').value = appCfg.webImou;
+      if (appCfg.exeSeetong) document.getElementById('exe-seetong').value = appCfg.exeSeetong;
+      if (appCfg.exeImou) document.getElementById('exe-imou').value = appCfg.exeImou;
+      if (appCfg.exeHik) document.getElementById('exe-hik').value = appCfg.exeHik;
 
       if (window.Chart) {
         monthlyChartInstance = new Chart(document.getElementById('monthlyChart'), {
