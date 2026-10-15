@@ -14,13 +14,9 @@
 
     /* LOGIN */
     .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a, #1e293b, #1d4ed8); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-    .login-card { background: #fff; width: 100%; max-width: 440px; border-radius: 16px; padding: 30px 26px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45); }
-    .login-logo { width: 52px; height: 52px; border-radius: 14px; background: #eff6ff; border: 1px solid #bfdbfe; color: #2563eb; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .login-card { background: #fff; width: 100%; max-width: 400px; border-radius: 16px; padding: 32px 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45); }
+    .login-logo { width: 52px; height: 52px; border-radius: 14px; background: #eff6ff; border: 1px solid #bfdbfe; color: #2563eb; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
     .login-error { background: #ffe4e6; color: #be123c; font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; }
-    .quick-demo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .demo-chip { font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-    .demo-chip:hover { background: #e2e8f0; }
-    .demo-chip.manager-chip { background: #fef3c7; border-color: #fde68a; color: #b45309; }
 
     /* SIDEBAR */
     .sidebar { width: 245px; background: linear-gradient(180deg, #111c30 0%, #1a2942 100%); color: #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; user-select: none; }
@@ -80,6 +76,7 @@
     th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
     td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
     tr:hover td { background: #f8fafc; }
+    .empty-row { text-align: center; color: #94a3b8; padding: 24px !important; font-style: italic; }
     .action-btn { background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-right: 3px; }
     .action-edit { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
     .action-del { color: #e11d48; background: #fff1f2; border-color: #fecdd3; }
@@ -140,29 +137,19 @@
     <div class="login-card">
       <div class="login-logo"><i class="fa-solid fa-shield-halved"></i></div>
       <h2 style="text-align:center;font-size:21px;font-weight:800;">IT Operations Portal</h2>
-      <p style="text-align:center;font-size:12.5px;color:#64748b;margin:4px 0 20px;">သင်၏ ဝန်ထမ်းအကောင့်ဖြင့် ဝင်ရောက်ပါ</p>
+      <p style="text-align:center;font-size:12.5px;color:#64748b;margin:4px 0 22px;">Sign in with your IT team account</p>
       <div id="login-error" class="login-error hidden">Username သို့မဟုတ် Password မှားယွင်းနေပါသည်</div>
       <form onsubmit="handleLogin(event)">
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:14px;">
           <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Username</label>
-          <input id="login-username" type="text" required placeholder="e.g. htet / yair / daevid" class="form-control">
+          <input id="login-username" type="text" required placeholder="Enter username" class="form-control">
         </div>
-        <div style="margin-bottom:18px;">
+        <div style="margin-bottom:20px;">
           <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Password</label>
-          <input id="login-password" type="password" required placeholder="••••••" class="form-control">
+          <input id="login-password" type="password" required placeholder="Enter password" class="form-control">
         </div>
         <button type="submit" class="btn btn-primary" style="width:100%;padding:10px;font-size:14px;">Sign In</button>
       </form>
-      <div style="margin-top:18px;padding-top:14px;border-top:1px solid #f1f5f9;">
-        <div style="font-size:11px;color:#64748b;font-weight:600;">အမြန်စမ်းသပ်ရန် အကောင့်များ (Pass: 123):</div>
-        <div class="quick-demo-chips">
-          <span onclick="fillDemoLogin('htet','123')" class="demo-chip manager-chip"><i class="fa-solid fa-crown"></i> Htet Aung Khant (Manager)</span>
-          <span onclick="fillDemoLogin('yair','123')" class="demo-chip">Yair Myat Aung</span>
-          <span onclick="fillDemoLogin('daevid','123')" class="demo-chip">Dae Vid</span>
-          <span onclick="fillDemoLogin('thaeei','123')" class="demo-chip">Thae Ei Mon</span>
-          <span onclick="fillDemoLogin('thurein','123')" class="demo-chip">Thurein Htun</span>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -209,7 +196,7 @@
         </div>
         <button onclick="switchTab('incidents')" class="bell-btn">
           <i class="fa-regular fa-bell"></i>
-          <span id="bell-count" class="bell-badge">1</span>
+          <span id="bell-count" class="bell-badge">0</span>
         </button>
       </div>
     </header>
@@ -220,23 +207,23 @@
         <div class="stats-grid">
           <div onclick="switchTab('daily-check')" class="stat-card card-green">
             <div class="stat-title">Total CCTV Checks</div>
-            <div class="stat-body"><i class="fa-solid fa-video stat-icon" style="color:#059669;"></i><div><div id="dash-cctv-count" class="stat-num">25</div><div class="stat-sub">This Month</div></div></div>
+            <div class="stat-body"><i class="fa-solid fa-video stat-icon" style="color:#059669;"></i><div><div id="dash-cctv-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
           </div>
           <div onclick="switchTab('daily-check')" class="stat-card card-blue">
             <div class="stat-title">Total Network Checks</div>
-            <div class="stat-body"><i class="fa-solid fa-globe stat-icon" style="color:#2563eb;"></i><div><div id="dash-net-count" class="stat-num">30</div><div class="stat-sub">This Month</div></div></div>
+            <div class="stat-body"><i class="fa-solid fa-globe stat-icon" style="color:#2563eb;"></i><div><div id="dash-net-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
           </div>
           <div onclick="switchTab('tasks')" class="stat-card card-amber">
             <div class="stat-title">Open Tasks</div>
-            <div class="stat-body"><i class="fa-solid fa-clipboard-list stat-icon" style="color:#d97706;"></i><div><div id="dash-task-count" class="stat-num">5</div><div class="stat-sub">In Progress</div></div></div>
+            <div class="stat-body"><i class="fa-solid fa-clipboard-list stat-icon" style="color:#d97706;"></i><div><div id="dash-task-count" class="stat-num">0</div><div class="stat-sub">In Progress</div></div></div>
           </div>
           <div onclick="switchTab('incidents')" class="stat-card card-rose">
             <div class="stat-title">Open Incidents</div>
-            <div class="stat-body"><i class="fa-solid fa-triangle-exclamation stat-icon" style="color:#e11d48;"></i><div><div id="dash-inc-count" class="stat-num">2</div><div class="stat-sub">This Month</div></div></div>
+            <div class="stat-body"><i class="fa-solid fa-triangle-exclamation stat-icon" style="color:#e11d48;"></i><div><div id="dash-inc-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
           </div>
         </div>
         <div class="dash-lower-grid">
-          <div class="panel"><div class="panel-header"><h3 class="panel-title">Activities This Month</h3></div><canvas id="monthlyChart" height="200"></canvas></div>
+          <div class="panel"><div class="panel-header"><h3 class="panel-title">Activities Overview</h3></div><canvas id="monthlyChart" height="200"></canvas></div>
           <div class="panel">
             <div class="panel-header"><h3 class="panel-title">Recent Activities</h3><button onclick="switchTab('daily-check')" class="link-btn">View All</button></div>
             <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>By</th></tr></thead><tbody id="dash-recent-tbody"></tbody></table>
@@ -266,7 +253,7 @@
       <section id="view-cctv-form" class="hidden">
         <div class="apk-launcher-bar">
           <div>
-            <div style="font-size:13.5px;font-weight:700;"><i class="fa-solid fa-mobile-screen-button" style="color:#059669;margin-right:6px;"></i>Open CCTV Apps (နှိပ်သည့် App သာ ပွင့်ပါမည်)</div>
+            <div style="font-size:13.5px;font-weight:700;"><i class="fa-solid fa-mobile-screen-button" style="color:#059669;margin-right:6px;"></i>Open CCTV Apps</div>
             <div style="font-size:11.5px;color:#64748b;">မိမိစစ်ဆေးလိုသော CCTV App ခလုတ်ကို တစ်ချက်နှိပ်၍ ဖွင့်ပါ</div>
           </div>
           <div class="apk-btn-group">
@@ -282,11 +269,11 @@
               <div class="form-row"><label>Ticket Number</label><input id="cctv-ticket" type="text" readonly class="form-control"></div>
               <div class="form-row"><label>Check Date</label><input id="cctv-date" type="date" required class="form-control"></div>
               <div class="form-row"><label>Checked By</label><input id="cctv-by" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Total Cameras</label><input id="cctv-total" type="number" value="102" oninput="calcOfflineCameras()" required class="form-control"></div>
-              <div class="form-row"><label>Working Cameras</label><input id="cctv-working" type="number" value="100" oninput="calcOfflineCameras()" required class="form-control"></div>
-              <div class="form-row"><label>Offline Cameras</label><input id="cctv-offline" type="number" value="2" readonly class="form-control"></div>
+              <div class="form-row"><label>Total Cameras</label><input id="cctv-total" type="number" value="0" min="0" oninput="calcOfflineCameras()" required class="form-control"></div>
+              <div class="form-row"><label>Working Cameras</label><input id="cctv-working" type="number" value="0" min="0" oninput="calcOfflineCameras()" required class="form-control"></div>
+              <div class="form-row"><label>Offline Cameras</label><input id="cctv-offline" type="number" value="0" readonly class="form-control"></div>
               <div class="form-row"><label>Overall Status</label><select id="cctv-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Completed</option><option value="Issue Found">Issue Found</option></select></div>
-              <div class="form-row"><label>Remarks</label><textarea id="cctv-remarks" rows="3" class="form-control" placeholder="All 100+ cameras working normally."></textarea></div>
+              <div class="form-row"><label>Remarks</label><textarea id="cctv-remarks" rows="3" class="form-control" placeholder="Enter CCTV check remarks..."></textarea></div>
             </div>
             <div style="display:flex;flex-direction:column;justify-content:space-between;border-left:1px solid #e2e8f0;padding-left:20px;">
               <div>
@@ -315,11 +302,11 @@
               <div class="form-row"><label>Ticket Number</label><input id="net-ticket" type="text" readonly class="form-control"></div>
               <div class="form-row"><label>Check Date</label><input id="net-date" type="date" required class="form-control"></div>
               <div class="form-row"><label>Checked By</label><input id="net-by" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Download (Mbps)</label><input id="net-dl" type="number" step="0.01" value="250" oninput="updateSpeedPreview()" required class="form-control"></div>
-              <div class="form-row"><label>Upload (Mbps)</label><input id="net-ul" type="number" step="0.01" value="180" oninput="updateSpeedPreview()" required class="form-control"></div>
-              <div class="form-row"><label>Ping (ms)</label><input id="net-ping" type="number" value="5" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Download (Mbps)</label><input id="net-dl" type="number" step="0.01" value="" placeholder="0.00" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Upload (Mbps)</label><input id="net-ul" type="number" step="0.01" value="" placeholder="0.00" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Ping (ms)</label><input id="net-ping" type="number" value="" placeholder="0" oninput="updateSpeedPreview()" required class="form-control"></div>
               <div class="form-row"><label>Status</label><select id="net-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Good</option><option value="Issue Found">Slow / Issue</option></select></div>
-              <div class="form-row"><label>Remarks</label><textarea id="net-remarks" rows="3" class="form-control" placeholder="Network speed is stable."></textarea></div>
+              <div class="form-row"><label>Remarks</label><textarea id="net-remarks" rows="3" class="form-control" placeholder="Enter network status remarks..."></textarea></div>
             </div>
             <div style="display:flex;flex-direction:column;justify-content:space-between;border-left:1px solid #e2e8f0;padding-left:20px;">
               <div>
@@ -327,10 +314,10 @@
                 <div style="background:#0f172a;color:#fff;border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
                   <div style="font-size:10.5px;color:#94a3b8;">SPEEDTEST LIVE PREVIEW</div>
                   <div style="display:flex;justify-content:space-around;margin:10px 0;">
-                    <div><div style="font-size:10px;color:#34d399;">DOWNLOAD</div><div id="preview-dl" style="font-size:22px;font-weight:800;">250</div></div>
-                    <div><div style="font-size:10px;color:#818cf8;">UPLOAD</div><div id="preview-ul" style="font-size:22px;font-weight:800;">180</div></div>
+                    <div><div style="font-size:10px;color:#34d399;">DOWNLOAD Mbps</div><div id="preview-dl" style="font-size:22px;font-weight:800;">0</div></div>
+                    <div><div style="font-size:10px;color:#818cf8;">UPLOAD Mbps</div><div id="preview-ul" style="font-size:22px;font-weight:800;">0</div></div>
                   </div>
-                  <div style="font-size:10.5px;color:#94a3b8;">Ping <span id="preview-ping">5</span> ms</div>
+                  <div style="font-size:10.5px;color:#94a3b8;">Ping <span id="preview-ping">0</span> ms</div>
                 </div>
                 <label class="upload-box">
                   <i class="fa-solid fa-cloud-arrow-up" style="font-size:22px;color:#3b82f6;"></i>
@@ -340,7 +327,7 @@
                 <div id="net-gallery" class="gallery-grid"></div>
               </div>
               <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
-                <button type="button" onclick="switchTab('daily-check')" class="btn btn-outline">Clear</button>
+                <button type="button" onclick="clearNetworkForm()" class="btn btn-outline">Clear</button>
                 <button type="submit" class="btn btn-primary"><i class="fa-regular fa-floppy-disk"></i> Save</button>
               </div>
             </div>
@@ -353,10 +340,10 @@
         <div class="panel">
           <div class="toolbar">
             <div class="filter-group">
-              <button onclick="filterTasks('All', this)" id="tbtn-all" class="filter-btn active">All</button>
-              <button onclick="filterTasks('Open', this)" id="tbtn-open" class="filter-btn">Open</button>
-              <button onclick="filterTasks('In Progress', this)" id="tbtn-prog" class="filter-btn">In Progress</button>
-              <button onclick="filterTasks('Completed', this)" id="tbtn-comp" class="filter-btn">Completed</button>
+              <button onclick="filterTasks('All', this)" id="tbtn-all" class="filter-btn active">All (0)</button>
+              <button onclick="filterTasks('Open', this)" id="tbtn-open" class="filter-btn">Open (0)</button>
+              <button onclick="filterTasks('In Progress', this)" id="tbtn-prog" class="filter-btn">In Progress (0)</button>
+              <button onclick="filterTasks('Completed', this)" id="tbtn-comp" class="filter-btn">Completed (0)</button>
             </div>
             <div style="display:flex;gap:8px;">
               <input id="task-search" oninput="renderTasks()" type="text" placeholder="Search tasks..." class="form-control" style="width:200px;">
@@ -372,10 +359,10 @@
         <div class="panel">
           <div class="toolbar">
             <div class="filter-group">
-              <button onclick="filterIncidents('All', this)" id="ibtn-all" class="filter-btn active">All</button>
-              <button onclick="filterIncidents('Open', this)" id="ibtn-open" class="filter-btn">Open</button>
-              <button onclick="filterIncidents('Resolved', this)" id="ibtn-res" class="filter-btn">Resolved</button>
-              <button onclick="filterIncidents('Closed', this)" id="ibtn-close" class="filter-btn">Closed</button>
+              <button onclick="filterIncidents('All', this)" id="ibtn-all" class="filter-btn active">All (0)</button>
+              <button onclick="filterIncidents('Open', this)" id="ibtn-open" class="filter-btn">Open (0)</button>
+              <button onclick="filterIncidents('Resolved', this)" id="ibtn-res" class="filter-btn">Resolved (0)</button>
+              <button onclick="filterIncidents('Closed', this)" id="ibtn-close" class="filter-btn">Closed (0)</button>
             </div>
             <div style="display:flex;gap:8px;">
               <input id="inc-search" oninput="renderIncidents()" type="text" placeholder="Search incidents..." class="form-control" style="width:200px;">
@@ -391,18 +378,15 @@
         <div class="panel">
           <div class="toolbar">
             <div class="filter-group">
-              <button onclick="setReportRange('Today', this)" class="filter-btn">Today</button>
-              <button onclick="setReportRange('This Week', this)" class="filter-btn">This Week</button>
-              <button onclick="setReportRange('This Month', this)" class="filter-btn active">This Month</button>
-              <button onclick="setReportRange('This Year', this)" class="filter-btn">This Year</button>
+              <button class="filter-btn active">All Recorded Data</button>
             </div>
             <button onclick="exportCSV()" class="btn btn-outline"><i class="fa-solid fa-file-export"></i> Export CSV</button>
           </div>
           <div class="stats-grid" style="margin-bottom:0;">
-            <div class="stat-card card-green"><div class="stat-title">CCTV Checks</div><div id="rep-cctv" class="stat-num">25</div></div>
-            <div class="stat-card card-blue"><div class="stat-title">Network Checks</div><div id="rep-net" class="stat-num">30</div></div>
-            <div class="stat-card card-amber"><div class="stat-title">Tasks Completed</div><div id="rep-tasks" class="stat-num">18</div></div>
-            <div class="stat-card card-rose"><div class="stat-title">Incidents</div><div id="rep-inc" class="stat-num">6</div></div>
+            <div class="stat-card card-green"><div class="stat-title">CCTV Checks</div><div id="rep-cctv" class="stat-num">0</div></div>
+            <div class="stat-card card-blue"><div class="stat-title">Network Checks</div><div id="rep-net" class="stat-num">0</div></div>
+            <div class="stat-card card-amber"><div class="stat-title">Tasks Completed</div><div id="rep-tasks" class="stat-num">0</div></div>
+            <div class="stat-card card-rose"><div class="stat-title">Incidents</div><div id="rep-inc" class="stat-num">0</div></div>
           </div>
         </div>
       </section>
@@ -414,14 +398,14 @@
             <div class="panel-header"><h3 class="panel-title">Individual KPI</h3><select id="kpi-member-select" onchange="renderKPI()" class="form-control" style="width:180px;padding:5px 8px;"></select></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:16px;margin-top:12px;">
               <div style="font-size:13px;line-height:2.3;">
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>CCTV Checks</span><b id="kpi-ind-cctv">25</b></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Network Checks</span><b id="kpi-ind-net">25</b></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Tasks Completed</span><b id="kpi-ind-task">18</b></div>
-                <div style="display:flex;justify-content:space-between;"><span>Incidents Resolved</span><b id="kpi-ind-inc">5</b></div>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>CCTV Checks</span><b id="kpi-ind-cctv">0</b></div>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Network Checks</span><b id="kpi-ind-net">0</b></div>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Tasks Completed</span><b id="kpi-ind-task">0</b></div>
+                <div style="display:flex;justify-content:space-between;"><span>Incidents Logged</span><b id="kpi-ind-inc">0</b></div>
               </div>
               <div style="text-align:center;">
-                <div id="kpi-score-circle" style="width:105px;height:105px;border-radius:50%;border:9px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px;font-weight:800;">95%</div>
-                <div style="font-size:12px;color:#64748b;margin-top:6px;font-weight:600;">KPI Score</div>
+                <div id="kpi-score-circle" style="width:105px;height:105px;border-radius:50%;border:9px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px;font-weight:800;">0%</div>
+                <div style="font-size:12px;color:#64748b;margin-top:6px;font-weight:600;">Activity Score</div>
               </div>
             </div>
           </div>
@@ -435,8 +419,11 @@
           <div class="panel-header">
             <div>
               <h3 class="panel-title">IT Team Accounts (ဝန်ထမ်းအကောင့်စာရင်း)</h3>
-              <p style="font-size:12px;color:#64748b;">IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ ပြင်ဆင်/ဖျက်ပိုင်ခွင့် ရှိသည်</p>
+              <p style="font-size:12px;color:#64748b;">IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ အကောင့်များနှင့် စာရင်းများကို ပြင်ဆင်/ဖျက်ပိုင်ခွင့် ရှိသည်</p>
             </div>
+            <button id="manager-clear-data-btn" type="button" onclick="resetToCleanProduction()" class="btn btn-danger hidden" style="font-size:11.5px;padding:6px 12px;">
+              <i class="fa-solid fa-broom"></i> Clear All Data (Start Fresh)
+            </button>
           </div>
           <form id="manager-add-user-form" onsubmit="addUserAccount(event)" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:8px;margin-bottom:14px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;">
             <input id="new-u-name" type="text" required placeholder="Full Name" class="form-control">
@@ -455,7 +442,7 @@
         <div class="dash-lower-grid">
           <div class="panel">
             <h3 class="panel-title" style="margin-bottom:6px;">GitHub Cloud Database & Team Invite Link</h3>
-            <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Token ထည့်ပြီး <b>Copy Team Auto-Sync Link</b> ကိုနှိပ်၍ ဝန်ထမ်းများကို ပို့ပေးပါက ဝန်ထမ်းတိုင်း Token ထည့်စရာမလိုဘဲ အလိုအလျောက် ချိတ်ဆက်ပြီး ဖြစ်သွားပါမည်။</p>
+            <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Token ထည့်ပြီး <b>Copy Team Auto-Sync Link</b> ကိုနှိပ်၍ ဝန်ထမ်းများကို ပို့ပေးပါက ဝန်ထမ်းတိုင်း အလိုအလျောက် ချိတ်ဆက်ပြီး ဖြစ်သွားပါမည်။</p>
             <div class="form-row"><label>GitHub Owner</label><input id="gh-owner" type="text" value="DaeVid78" class="form-control"></div>
             <div class="form-row"><label>Repository Name</label><input id="gh-repo" type="text" value="it-operations-portal" class="form-control"></div>
             <div class="form-row"><label>GitHub Token</label><input id="gh-token" type="password" placeholder="ghp_... or github_pat_..." class="form-control"></div>
@@ -512,7 +499,8 @@
   </div>
 
   <script>
-    const DB_SCHEMA_VERSION = 'v6_team_sync_2026';
+    // --- CLEAN PRODUCTION SCHEMA (ZERO PREVIEW DATA) ---
+    const DB_SCHEMA_VERSION = 'v8_clean_production_2026';
     const defaultDB = {
       schemaVersion: DB_SCHEMA_VERSION,
       users: [
@@ -522,29 +510,16 @@
         { username: 'thurein', password: '123', name: 'Thurein Htun', role: 'IT Support Specialist' },
         { username: 'htet', password: '123', name: 'Htet Aung Khant', role: 'IT Manager' }
       ],
-      cctvCount: 25,
-      networkCount: 30,
-      dailyChecks: [
-        { date: '15 Oct 2026', type: 'CCTV', status: 'Completed', remark: 'All cameras working normally', by: 'Yair Myat Aung' },
-        { date: '15 Oct 2026', type: 'Network', status: 'Completed', remark: 'Speed: 250 Mbps', by: 'Dae Vid' },
-        { date: '14 Oct 2026', type: 'CCTV', status: 'Issue Found', remark: 'Camera 14 Offline', by: 'Thae Ei Mon' },
-        { date: '14 Oct 2026', type: 'Network', status: 'Completed', remark: 'Speed: 220 Mbps', by: 'Thurein Htun' }
-      ],
-      tasks: [
-        { no: 'TASK-001', name: 'Replace Switch', assigned: 'Yair Myat Aung', priority: 'High', status: 'In Progress', due: '16 Oct 2026' },
-        { no: 'TASK-002', name: 'Install Printer', assigned: 'Dae Vid', priority: 'Medium', status: 'Open', due: '17 Oct 2026' },
-        { no: 'TASK-003', name: 'Configure Firewall', assigned: 'Thurein Htun', priority: 'High', status: 'Completed', due: '15 Oct 2026' },
-        { no: 'TASK-004', name: 'Check Backup', assigned: 'Thae Ei Mon', priority: 'Medium', status: 'In Progress', due: '16 Oct 2026' }
-      ],
-      incidents: [
-        { no: 'INC-001', date: '15 Oct 2026', category: 'CCTV', issue: 'Camera 14 Offline', by: 'Thae Ei Mon', status: 'Open' },
-        { no: 'INC-002', date: '14 Oct 2026', category: 'Network', issue: 'Internet Down', by: 'Dae Vid', status: 'Resolved' }
-      ]
+      cctvCount: 0,
+      networkCount: 0,
+      dailyChecks: [],
+      tasks: [],
+      incidents: []
     };
 
     let savedDB = JSON.parse(localStorage.getItem('it_portal_db') || 'null');
-    if (!savedDB || savedDB.schemaVersion !== DB_SCHEMA_VERSION || !savedDB.users.some(u => u.username === 'htet')) {
-      savedDB = defaultDB;
+    if (!savedDB || savedDB.schemaVersion !== DB_SCHEMA_VERSION) {
+      savedDB = JSON.parse(JSON.stringify(defaultDB));
       localStorage.setItem('it_portal_db', JSON.stringify(savedDB));
     }
     let db = savedDB;
@@ -552,11 +527,25 @@
     if (currentUser && !db.users.some(u => u.username === currentUser.username)) currentUser = null;
 
     let cctvImages = [], netImages = [], taskFilter = 'All', incFilter = 'All';
+    let monthlyChartInstance = null, kpiChartInstance = null;
+
+    async function resetToCleanProduction() {
+      if (!isManager()) return requireManagerAlert();
+      if (!confirm('စာရင်းများအားလုံးကို ဖျက်ပြီး အသစ်စက်စက် (0) မှ ပြန်စရန် သေချာပါသလား? (ဝန်ထမ်းအကောင့်များ မပျက်ပါ)')) return;
+      db.cctvCount = 0;
+      db.networkCount = 0;
+      db.dailyChecks = [];
+      db.tasks = [];
+      db.incidents = [];
+      db.schemaVersion = DB_SCHEMA_VERSION;
+      localStorage.setItem('it_portal_db', JSON.stringify(db));
+      renderAll();
+      await pushToGitHub();
+    }
 
     function isManager() { return currentUser && currentUser.role === 'IT Manager'; }
     function requireManagerAlert() { alert('IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ ပြင်ဆင်ခွင့်နှင့် ဖျက်ခွင့် ရှိပါသည်။'); }
     function getInitials(n) { return (n || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
-    function fillDemoLogin(u, p) { document.getElementById('login-username').value = u; document.getElementById('login-password').value = p; }
 
     function handleLogin(e) {
       e.preventDefault();
@@ -581,8 +570,8 @@
       rb.className = isManager() ? 'role-indicator role-manager' : 'role-indicator role-staff';
       rb.innerHTML = isManager() ? '<i class="fa-solid fa-crown"></i> Manager Mode' : '<i class="fa-solid fa-lock"></i> Staff Mode';
 
-      const form = document.getElementById('manager-add-user-form');
-      if (form) form.classList.toggle('hidden', !isManager());
+      document.getElementById('manager-add-user-form')?.classList.toggle('hidden', !isManager());
+      document.getElementById('manager-clear-data-btn')?.classList.toggle('hidden', !isManager());
 
       document.getElementById('cctv-by').value = currentUser.name;
       document.getElementById('net-by').value = currentUser.name;
@@ -679,7 +668,7 @@
       document.getElementById('preview-dl').innerText = dl;
       document.getElementById('preview-ul').innerText = ul;
       document.getElementById('preview-ping').innerText = ping;
-      document.getElementById('net-status').value = (dl < 50 || ping > 100) ? 'Issue Found' : 'Completed';
+      document.getElementById('net-status').value = (dl > 0 && dl < 50) || ping > 100 ? 'Issue Found' : 'Completed';
     }
 
     function handleGalleryUpload(e, type) {
@@ -698,7 +687,21 @@
     }
 
     function removeGalleryImage(type, idx) { (type === 'cctv' ? cctvImages : netImages).splice(idx, 1); renderGallery(type); }
-    function clearCCTVForm() { cctvImages = []; renderGallery('cctv'); document.getElementById('cctv-remarks').value = ''; }
+    function clearCCTVForm() {
+      cctvImages = []; renderGallery('cctv');
+      document.getElementById('cctv-total').value = 0;
+      document.getElementById('cctv-working').value = 0;
+      document.getElementById('cctv-offline').value = 0;
+      document.getElementById('cctv-remarks').value = '';
+    }
+    function clearNetworkForm() {
+      netImages = []; renderGallery('net');
+      document.getElementById('net-dl').value = '';
+      document.getElementById('net-ul').value = '';
+      document.getElementById('net-ping').value = '';
+      document.getElementById('net-remarks').value = '';
+      updateSpeedPreview();
+    }
 
     function saveAppConfig() {
       localStorage.setItem('cctv_app_cfg', JSON.stringify({
@@ -747,12 +750,12 @@
       const today = getLocalISODate();
       if (tabId === 'cctv-form') {
         document.getElementById('cctv-date').value = today;
-        document.getElementById('cctv-ticket').value = `CCTV-${today.replace(/-/g, '')}-00${db.cctvCount + 1}`;
+        document.getElementById('cctv-ticket').value = `CCTV-${today.replace(/-/g, '')}-${String(db.cctvCount + 1).padStart(3, '0')}`;
         if (currentUser) document.getElementById('cctv-by').value = currentUser.name;
       }
       if (tabId === 'network-form') {
         document.getElementById('net-date').value = today;
-        document.getElementById('net-ticket').value = `NET-${today.replace(/-/g, '')}-00${db.networkCount + 1}`;
+        document.getElementById('net-ticket').value = `NET-${today.replace(/-/g, '')}-${String(db.networkCount + 1).padStart(3, '0')}`;
         if (currentUser) document.getElementById('net-by').value = currentUser.name;
       }
       renderAll();
@@ -775,23 +778,29 @@
       document.getElementById('rep-tasks').innerText = db.tasks.filter(t => t.status === 'Completed').length;
       document.getElementById('rep-inc').innerText = db.incidents.length;
 
-      document.getElementById('dash-recent-tbody').innerHTML = db.dailyChecks.slice(0, 5).map(c => `
-        <tr><td>${c.date}</td><td><b>${c.type}</b></td><td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td></tr>
-      `).join('');
+      const recentBody = document.getElementById('dash-recent-tbody');
+      recentBody.innerHTML = db.dailyChecks.length
+        ? db.dailyChecks.slice(0, 5).map(c => `<tr><td>${c.date}</td><td><b>${c.type}</b></td><td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td></tr>`).join('')
+        : `<tr><td colspan="4" class="empty-row">No activities recorded yet.</td></tr>`;
 
-      document.getElementById('daily-checks-tbody').innerHTML = db.dailyChecks.map((c, idx) => `
-        <tr>
-          <td>${c.date}</td><td><b>${c.type}</b></td>
-          <td><span class="badge ${c.status === 'Completed' ? 'b-green' : 'b-amber'}">${c.status}</span></td>
-          <td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td>
-          <td>${isManager()
-            ? `<button onclick="editDailyCheck(${idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
-               <button onclick="deleteDailyCheck(${idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
-            : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
-        </tr>
-      `).join('');
+      const dailyBody = document.getElementById('daily-checks-tbody');
+      dailyBody.innerHTML = db.dailyChecks.length
+        ? db.dailyChecks.map((c, idx) => `
+          <tr>
+            <td>${c.date}</td><td><b>${c.type}</b></td>
+            <td><span class="badge ${c.status === 'Completed' ? 'b-green' : 'b-amber'}">${c.status}</span></td>
+            <td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td>
+            <td>${isManager()
+              ? `<button onclick="editDailyCheck(${idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                 <button onclick="deleteDailyCheck(${idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+              : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+          </tr>`).join('')
+        : `<tr><td colspan="6" class="empty-row">No daily checks recorded yet.</td></tr>`;
 
-      renderTasks(); renderIncidents(); renderKPI();
+      renderTasks();
+      renderIncidents();
+      renderKPI();
+      updateCharts();
     }
 
     async function editDailyCheck(idx) {
@@ -820,26 +829,24 @@
       document.getElementById('tbtn-comp').innerText = `Completed (${db.tasks.filter(t=>t.status==='Completed').length})`;
 
       const q = (document.getElementById('task-search')?.value || '').toLowerCase();
-      document.getElementById('tasks-tbody').innerHTML = db.tasks
-        .map((t, idx) => ({ ...t, idx }))
-        .filter(t => (taskFilter === 'All' || t.status === taskFilter) && t.name.toLowerCase().includes(q))
-        .map(t => {
-          const pri = t.priority === 'High' ? 'b-rose' : t.priority === 'Medium' ? 'b-amber' : 'b-blue';
-          const st = t.status === 'Completed' ? 'b-green' : t.status === 'In Progress' ? 'b-blue' : 'b-amber';
-          return `
-            <tr>
-              <td><b>${t.no}</b></td><td><b>${t.name}</b></td>
-              <td><span class="mini-avatar">${getInitials(t.assigned)}</span>${t.assigned}</td>
-              <td><span class="badge ${pri}">${t.priority}</span></td>
-              <td><span ${isManager() ? `onclick="cycleTaskStatus(${t.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${t.status}</span></td>
-              <td>${t.due}</td>
-              <td>${isManager()
-                ? `<button onclick="editTask(${t.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
-                   <button onclick="deleteTask(${t.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
-                : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
-            </tr>
-          `;
-        }).join('');
+      const list = db.tasks.map((t, idx) => ({ ...t, idx })).filter(t => (taskFilter === 'All' || t.status === taskFilter) && t.name.toLowerCase().includes(q));
+      const tbody = document.getElementById('tasks-tbody');
+      tbody.innerHTML = list.length ? list.map(t => {
+        const pri = t.priority === 'High' ? 'b-rose' : t.priority === 'Medium' ? 'b-amber' : 'b-blue';
+        const st = t.status === 'Completed' ? 'b-green' : t.status === 'In Progress' ? 'b-blue' : 'b-amber';
+        return `
+          <tr>
+            <td><b>${t.no}</b></td><td><b>${t.name}</b></td>
+            <td><span class="mini-avatar">${getInitials(t.assigned)}</span>${t.assigned}</td>
+            <td><span class="badge ${pri}">${t.priority}</span></td>
+            <td><span ${isManager() ? `onclick="cycleTaskStatus(${t.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${t.status}</span></td>
+            <td>${t.due}</td>
+            <td>${isManager()
+              ? `<button onclick="editTask(${t.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                 <button onclick="deleteTask(${t.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+              : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+          </tr>`;
+      }).join('') : `<tr><td colspan="7" class="empty-row">No tasks found.</td></tr>`;
     }
 
     async function cycleTaskStatus(idx) {
@@ -873,24 +880,22 @@
       document.getElementById('ibtn-close').innerText = `Closed (${db.incidents.filter(i=>i.status==='Closed').length})`;
 
       const q = (document.getElementById('inc-search')?.value || '').toLowerCase();
-      document.getElementById('incidents-tbody').innerHTML = db.incidents
-        .map((i, idx) => ({ ...i, idx }))
-        .filter(i => (incFilter === 'All' || i.status === incFilter) && i.issue.toLowerCase().includes(q))
-        .map(i => {
-          const st = i.status === 'Open' ? 'b-rose' : i.status === 'Resolved' ? 'b-green' : 'b-teal';
-          const byName = i.by || 'Yair Myat Aung';
-          return `
-            <tr>
-              <td><b>${i.no}</b></td><td>${i.date}</td><td><b>${i.category}</b></td><td>${i.issue}</td>
-              <td><span class="mini-avatar">${getInitials(byName)}</span>${byName}</td>
-              <td><span ${isManager() ? `onclick="cycleIncidentStatus(${i.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${i.status}</span></td>
-              <td>${isManager()
-                ? `<button onclick="editIncident(${i.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
-                   <button onclick="deleteIncident(${i.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
-                : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
-            </tr>
-          `;
-        }).join('');
+      const list = db.incidents.map((i, idx) => ({ ...i, idx })).filter(i => (incFilter === 'All' || i.status === incFilter) && i.issue.toLowerCase().includes(q));
+      const tbody = document.getElementById('incidents-tbody');
+      tbody.innerHTML = list.length ? list.map(i => {
+        const st = i.status === 'Open' ? 'b-rose' : i.status === 'Resolved' ? 'b-green' : 'b-teal';
+        const byName = i.by || 'IT Support';
+        return `
+          <tr>
+            <td><b>${i.no}</b></td><td>${i.date}</td><td><b>${i.category}</b></td><td>${i.issue}</td>
+            <td><span class="mini-avatar">${getInitials(byName)}</span>${byName}</td>
+            <td><span ${isManager() ? `onclick="cycleIncidentStatus(${i.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${i.status}</span></td>
+            <td>${isManager()
+              ? `<button onclick="editIncident(${i.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                 <button onclick="deleteIncident(${i.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+              : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+          </tr>`;
+      }).join('') : `<tr><td colspan="7" class="empty-row">No incidents logged.</td></tr>`;
     }
 
     async function cycleIncidentStatus(idx) {
@@ -919,21 +924,43 @@
 
     function renderKPI() {
       const m = document.getElementById('kpi-member-select')?.value || (currentUser ? currentUser.name : 'Yair Myat Aung');
-      const cctv = db.dailyChecks.filter(c => c.by === m && c.type === 'CCTV').length + 18;
-      const net = db.dailyChecks.filter(c => c.by === m && c.type === 'Network').length + 20;
-      const tasks = db.tasks.filter(t => t.assigned === m && t.status === 'Completed').length + 14;
-      const score = Math.min(100, Math.round(((cctv + net + tasks) / 65) * 100));
+      const cctv = db.dailyChecks.filter(c => c.by === m && c.type === 'CCTV').length;
+      const net = db.dailyChecks.filter(c => c.by === m && c.type === 'Network').length;
+      const tasks = db.tasks.filter(t => t.assigned === m && t.status === 'Completed').length;
+      const inc = db.incidents.filter(i => i.by === m).length;
+      const totalActions = cctv + net + tasks;
+      const score = totalActions === 0 ? 0 : Math.min(100, Math.round((totalActions / 30) * 100));
+
       document.getElementById('kpi-ind-cctv').innerText = cctv;
       document.getElementById('kpi-ind-net').innerText = net;
       document.getElementById('kpi-ind-task').innerText = tasks;
+      document.getElementById('kpi-ind-inc').innerText = inc;
       document.getElementById('kpi-score-circle').innerText = `${score}%`;
     }
 
-    function setReportRange(r, btn) {
-      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-      const mult = r === 'Today' ? 0.1 : r === 'This Week' ? 0.35 : r === 'This Year' ? 8 : 1;
-      document.getElementById('rep-cctv').innerText = Math.max(1, Math.round(db.cctvCount * mult));
-      document.getElementById('rep-net').innerText = Math.max(1, Math.round(db.networkCount * mult));
+    function updateCharts() {
+      if (!window.Chart) return;
+      const names = db.users.map(u => u.name);
+      const cctvData = names.map(n => db.dailyChecks.filter(c => c.by === n && c.type === 'CCTV').length);
+      const netData = names.map(n => db.dailyChecks.filter(c => c.by === n && c.type === 'Network').length);
+      const taskData = names.map(n => db.tasks.filter(t => t.assigned === n && t.status === 'Completed').length);
+      const incData = names.map(n => db.incidents.filter(i => i.by === n).length);
+
+      if (kpiChartInstance) {
+        kpiChartInstance.data.labels = names;
+        kpiChartInstance.data.datasets[0].data = cctvData;
+        kpiChartInstance.data.datasets[1].data = netData;
+        kpiChartInstance.data.datasets[2].data = taskData;
+        kpiChartInstance.data.datasets[3].data = incData;
+        kpiChartInstance.update();
+      }
+      if (monthlyChartInstance) {
+        monthlyChartInstance.data.datasets[0].data = [db.cctvCount];
+        monthlyChartInstance.data.datasets[1].data = [db.networkCount];
+        monthlyChartInstance.data.datasets[2].data = [db.tasks.length];
+        monthlyChartInstance.data.datasets[3].data = [db.incidents.length];
+        monthlyChartInstance.update();
+      }
     }
 
     async function saveCCTVCheck(e) {
@@ -945,7 +972,7 @@
       const by = currentUser ? currentUser.name : document.getElementById('cctv-by').value;
       const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
       db.dailyChecks.unshift({ date: dateStr, type: 'CCTV', status, remark, by });
-      if (offline > 0) db.incidents.unshift({ no: `INC-00${db.incidents.length + 1}`, date: dateStr, category: 'CCTV', issue: remark, by, status: 'Open' });
+      if (offline > 0) db.incidents.unshift({ no: `INC-${String(db.incidents.length + 1).padStart(3, '0')}`, date: dateStr, category: 'CCTV', issue: remark, by, status: 'Open' });
       clearCCTVForm(); await pushToGitHub(); switchTab('daily-check');
     }
 
@@ -959,7 +986,7 @@
         type: 'Network', status: document.getElementById('net-status').value,
         remark: document.getElementById('net-remarks').value || `Speed: ${dl} Mbps`, by
       });
-      netImages = []; renderGallery('net'); await pushToGitHub(); switchTab('daily-check');
+      clearNetworkForm(); await pushToGitHub(); switchTab('daily-check');
     }
 
     function openTaskModal() { document.getElementById('m-task-due').value = getLocalISODate(); document.getElementById('task-modal').classList.remove('hidden'); }
@@ -969,14 +996,14 @@
     async function submitNewTask(e) {
       e.preventDefault();
       const due = new Date(document.getElementById('m-task-due').value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-      db.tasks.unshift({ no: `TASK-00${db.tasks.length + 1}`, name: document.getElementById('m-task-name').value, assigned: document.getElementById('m-task-user').value, priority: document.getElementById('m-task-priority').value, status: 'Open', due });
+      db.tasks.unshift({ no: `TASK-${String(db.tasks.length + 1).padStart(3, '0')}`, name: document.getElementById('m-task-name').value, assigned: document.getElementById('m-task-user').value, priority: document.getElementById('m-task-priority').value, status: 'Open', due });
       document.getElementById('m-task-name').value = ''; closeModals(); renderAll(); await pushToGitHub();
     }
 
     async function submitNewIncident(e) {
       e.preventDefault();
       db.incidents.unshift({
-        no: `INC-00${db.incidents.length + 1}`,
+        no: `INC-${String(db.incidents.length + 1).padStart(3, '0')}`,
         date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         category: document.getElementById('m-inc-cat').value, issue: document.getElementById('m-inc-issue').value,
         by: currentUser ? currentUser.name : 'IT Support', status: 'Open'
@@ -991,7 +1018,6 @@
       a.download = 'it-operations-report.csv'; a.click();
     }
 
-    // --- GITHUB AUTO-SYNC FOR ALL USERS ---
     function saveGitHubConfig() {
       const cfg = {
         owner: document.getElementById('gh-owner').value.trim() || 'DaeVid78',
@@ -1007,10 +1033,12 @@
       const token = document.getElementById('gh-token').value.trim();
       if (!token) return alert('GitHub Token အရင်ထည့်ပေးပါ!');
       saveGitHubConfig();
-      const baseUrl = window.location.origin + window.location.pathname;
+      const baseUrl = window.location.href.startsWith('file:')
+        ? 'https://daevid78.github.io/it-operations-portal/'
+        : (window.location.origin + window.location.pathname);
       const inviteUrl = `${baseUrl}?sync=${btoa(token)}`;
       navigator.clipboard.writeText(inviteUrl);
-      alert('Team Auto-Sync Link ကို Copy ကူးပြီးပါပြီ! ဤ Link ကို ဝန်ထမ်းများသို့ ပို့ပေးလိုက်ပါ။');
+      alert(`Team Auto-Sync Link ကို Copy ကူးပြီးပါပြီ!\n\n${inviteUrl}`);
     }
 
     async function pullFromGitHub() {
@@ -1024,7 +1052,7 @@
         if (res.ok) {
           const file = await res.json();
           const remoteDB = JSON.parse(decodeURIComponent(escape(atob(file.content))));
-          if (remoteDB && remoteDB.users) {
+          if (remoteDB && remoteDB.schemaVersion === DB_SCHEMA_VERSION) {
             db = remoteDB;
             renderAll();
           }
@@ -1058,7 +1086,6 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       updateRealTimeDate();
-      // Auto-capture token from shared invite link (?sync=...)
       const params = new URLSearchParams(window.location.search);
       if (params.get('sync')) {
         try {
@@ -1073,36 +1100,36 @@
       document.getElementById('gh-repo').value = cfg.repo || 'it-operations-portal';
       if (cfg.token) document.getElementById('gh-token').value = cfg.token;
 
-      applyLoggedInUser();
-      pullFromGitHub();
-      setInterval(pullFromGitHub, 15000); // Auto-sync every 15 seconds for all users
-
       if (window.Chart) {
-        new Chart(document.getElementById('monthlyChart'), {
-          type: 'line',
+        monthlyChartInstance = new Chart(document.getElementById('monthlyChart'), {
+          type: 'bar',
           data: {
-            labels: ['1 Oct', '7 Oct', '14 Oct', '21 Oct', '31 Oct'],
+            labels: ['Current Month Totals'],
             datasets: [
-              { label: 'CCTV', data: [12, 18, 15, 22, 30], borderColor: '#10b981', tension: 0.3 },
-              { label: 'Network', data: [8, 14, 11, 16, 20], borderColor: '#2563eb', tension: 0.3 },
-              { label: 'Tasks', data: [3, 5, 6, 8, 13], borderColor: '#f59e0b', tension: 0.3 },
-              { label: 'Incidents', data: [1, 2, 1, 3, 4], borderColor: '#e11d48', tension: 0.3 }
+              { label: 'CCTV Checks', data: [0], backgroundColor: '#10b981' },
+              { label: 'Network Checks', data: [0], backgroundColor: '#2563eb' },
+              { label: 'Tasks', data: [0], backgroundColor: '#f59e0b' },
+              { label: 'Incidents', data: [0], backgroundColor: '#e11d48' }
             ]
           }
         });
-        new Chart(document.getElementById('kpiChart'), {
+        kpiChartInstance = new Chart(document.getElementById('kpiChart'), {
           type: 'bar',
           data: {
-            labels: ['Yair Myat Aung', 'Dae Vid', 'Thae Ei Mon', 'Thurein Htun', 'Htet Aung Khant'],
+            labels: db.users.map(u => u.name),
             datasets: [
-              { label: 'CCTV', data: [25, 24, 22, 21, 18], backgroundColor: '#10b981' },
-              { label: 'Network', data: [25, 26, 20, 22, 19], backgroundColor: '#2563eb' },
-              { label: 'Tasks', data: [18, 19, 17, 16, 20], backgroundColor: '#f59e0b' },
-              { label: 'Incidents', data: [5, 6, 7, 5, 8], backgroundColor: '#e11d48' }
+              { label: 'CCTV', data: [0, 0, 0, 0, 0], backgroundColor: '#10b981' },
+              { label: 'Network', data: [0, 0, 0, 0, 0], backgroundColor: '#2563eb' },
+              { label: 'Tasks', data: [0, 0, 0, 0, 0], backgroundColor: '#f59e0b' },
+              { label: 'Incidents', data: [0, 0, 0, 0, 0], backgroundColor: '#e11d48' }
             ]
           }
         });
       }
+
+      applyLoggedInUser();
+      pullFromGitHub();
+      setInterval(pullFromGitHub, 15000);
     });
   </script>
 </body>
