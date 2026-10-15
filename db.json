@@ -32,9 +32,16 @@
       "role": "IT Manager"
     }
   ],
-  "cctvCount": 26,
+  "cctvCount": 27,
   "networkCount": 30,
   "dailyChecks": [
+    {
+      "date": "15 Oct 2026",
+      "type": "CCTV",
+      "status": "Completed",
+      "remark": "All cameras working normally",
+      "by": "Htet Aung Khant"
+    },
     {
       "date": "15 Oct 2026",
       "type": "CCTV",
