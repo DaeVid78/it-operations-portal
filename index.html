@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Operations Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #f3f6f9; color: #1e293b; display: flex; height: 100vh; overflow: hidden; }
+    .hidden { display: none !important; }
+
+    /* LOGIN */
+    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a, #1e293b, #1d4ed8); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+    .login-card { background: #fff; width: 100%; max-width: 440px; border-radius: 16px; padding: 30px 26px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45); }
+    .login-logo { width: 52px; height: 52px; border-radius: 14px; background: #eff6ff; border: 1px solid #bfdbfe; color: #2563eb; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+    .login-error { background: #ffe4e6; color: #be123c; font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; }
+    .quick-demo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .demo-chip { font-size: 11px; background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155; padding: 5px 9px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .demo-chip:hover { background: #e2e8f0; }
+    .demo-chip.manager-chip { background: #fef3c7; border-color: #fde68a; color: #b45309; }
+
+    /* SIDEBAR */
+    .sidebar { width: 245px; background: linear-gradient(180deg, #111c30 0%, #1a2942 100%); color: #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; user-select: none; }
+    .brand { padding: 18px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .brand-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(59,130,246,0.2); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; color: #60a5fa; }
+    .brand-title { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.25; }
+    .nav-menu { padding: 12px; display: flex; flex-direction: column; gap: 5px; }
+    .nav-btn { width: 100%; background: transparent; border: none; color: #cbd5e1; padding: 10px 14px; border-radius: 8px; font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left; font-family: inherit; }
+    .nav-btn i { width: 18px; text-align: center; }
+    .nav-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .nav-btn.active { background: #1d6bf3; color: #fff; box-shadow: 0 4px 12px rgba(29,107,243,0.35); }
+    .user-footer { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(15,23,42,0.45); display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #6366f1; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .mini-avatar { width: 22px; height: 22px; border-radius: 50%; background: #4f46e5; color: #fff; font-weight: 700; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; }
+    .user-name { color: #fff; font-size: 13px; font-weight: 600; }
+    .user-role { color: #94a3b8; font-size: 11px; }
+    .logout-btn { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.35); color: #fca5a5; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .logout-btn:hover { background: #ef4444; color: #fff; }
+
+    /* MAIN */
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .top-header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 14px 26px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .page-title { font-size: 22px; font-weight: 700; }
+    .page-subtitle { font-size: 12px; color: #64748b; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .role-indicator { font-size: 11.5px; padding: 5px 10px; border-radius: 999px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+    .role-manager { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .role-staff { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .sync-badge { font-size: 11.5px; padding: 5px 10px; border-radius: 999px; background: #d1fae5; color: #047857; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block; }
+    .date-box { font-size: 12px; color: #475569; background: #f1f5f9; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 6px; font-weight: 500; }
+    .bell-btn { background: none; border: none; color: #64748b; font-size: 17px; cursor: pointer; position: relative; }
+    .bell-badge { position: absolute; top: -4px; right: -6px; background: #ef4444; color: #fff; font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 999px; }
+
+    /* CONTENT & CARDS */
+    .content-area { flex: 1; overflow-y: auto; padding: 22px 26px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+    .stat-card { border-radius: 12px; padding: 18px; text-align: center; cursor: pointer; transition: transform 0.15s; }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-title { font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
+    .stat-body { display: flex; align-items: center; justify-content: center; gap: 14px; }
+    .stat-icon { font-size: 28px; }
+    .stat-num { font-size: 30px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+    .stat-sub { font-size: 11px; color: #64748b; }
+    .card-green { background: #ecfdf5; border: 1px solid #a7f3d0; }
+    .card-blue  { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .card-amber { background: #fffbeb; border: 1px solid #fde68a; }
+    .card-rose  { background: #fff1f2; border: 1px solid #fecdd3; }
+
+    .panel { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+    .dash-lower-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 20px; }
+    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .panel-title { font-size: 15px; font-weight: 700; }
+    .link-btn { background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+    th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
+    td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
+    tr:hover td { background: #f8fafc; }
+    .action-btn { background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-right: 3px; }
+    .action-edit { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
+    .action-del { color: #e11d48; background: #fff1f2; border-color: #fecdd3; }
+    .view-only-tag { font-size: 11px; color: #94a3b8; font-weight: 500; }
+
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; }
+    .b-green { background: #d1fae5; color: #047857; }
+    .b-amber { background: #fef3c7; color: #b45309; }
+    .b-blue  { background: #dbeafe; color: #1d4ed8; }
+    .b-rose  { background: #ffe4e6; color: #be123c; }
+    .b-teal  { background: #ccfbf1; color: #0f766e; }
+
+    .check-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .check-card { border-radius: 14px; padding: 22px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
+    .check-card-top { display: flex; align-items: flex-start; gap: 14px; }
+    .check-icon-box { width: 50px; height: 50px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .circle-arrow { width: 34px; height: 34px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; margin: 14px auto 0; }
+
+    /* APK BAR & FORMS */
+    .apk-launcher-bar { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .apk-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .apk-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 700; color: #fff; border: none; cursor: pointer; font-family: inherit; }
+    .apk-seetong { background: #0284c7; }
+    .apk-imou    { background: #ea580c; }
+    .apk-hik     { background: #dc2626; }
+    .apk-pc      { background: #475569; font-size: 11.5px; }
+
+    .form-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; }
+    .form-row { display: grid; grid-template-columns: 160px 1fr; align-items: center; margin-bottom: 12px; font-size: 13.5px; }
+    .form-row label { color: #475569; font-weight: 500; }
+    .form-control { width: 100%; padding: 8px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-family: inherit; background: #fff; }
+    .form-control[readonly] { background: #f1f5f9; color: #0f172a; font-weight: 600; }
+    .upload-box { border: 2px dashed #93c5fd; border-radius: 12px; padding: 18px; text-align: center; cursor: pointer; background: #f8fafc; display: block; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+    .gallery-item { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; height: 90px; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-remove { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: rgba(15,23,42,0.75); color: #fff; border: none; cursor: pointer; font-size: 10px; }
+
+    .btn { padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-family: inherit; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-danger { background: #e11d48; color: #fff; }
+    .btn-outline { background: #fff; border-color: #cbd5e1; color: #334155; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-btn { padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: none; background: #f1f5f9; color: #475569; cursor: pointer; }
+    .filter-btn.active { background: #2563eb; color: #fff; }
+
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 50; }
+    .modal-card { background: #fff; border-radius: 14px; width: 100%; max-width: 480px; padding: 22px; }
+    @media (max-width: 1024px) { .stats-grid, .dash-lower-grid, .check-cards-grid, .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN OVERLAY -->
+  <div id="login-screen" class="login-overlay">
+    <div class="login-card">
+      <div class="login-logo"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2 style="text-align:center;font-size:21px;font-weight:800;">IT Operations Portal</h2>
+      <p style="text-align:center;font-size:12.5px;color:#64748b;margin:4px 0 20px;">သင်၏ ဝန်ထမ်းအကောင့်ဖြင့် ဝင်ရောက်ပါ</p>
+      <div id="login-error" class="login-error hidden">Username သို့မဟုတ် Password မှားယွင်းနေပါသည်</div>
+      <form onsubmit="handleLogin(event)">
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Username</label>
+          <input id="login-username" type="text" required placeholder="e.g. htet / yair / daevid" class="form-control">
+        </div>
+        <div style="margin-bottom:18px;">
+          <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Password</label>
+          <input id="login-password" type="password" required placeholder="••••••" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:10px;font-size:14px;">Sign In</button>
+      </form>
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid #f1f5f9;">
+        <div style="font-size:11px;color:#64748b;font-weight:600;">အမြန်စမ်းသပ်ရန် အကောင့်များ (Pass: 123):</div>
+        <div class="quick-demo-chips">
+          <span onclick="fillDemoLogin('htet','123')" class="demo-chip manager-chip"><i class="fa-solid fa-crown"></i> Htet Aung Khant (Manager)</span>
+          <span onclick="fillDemoLogin('yair','123')" class="demo-chip">Yair Myat Aung</span>
+          <span onclick="fillDemoLogin('daevid','123')" class="demo-chip">Dae Vid</span>
+          <span onclick="fillDemoLogin('thaeei','123')" class="demo-chip">Thae Ei Mon</span>
+          <span onclick="fillDemoLogin('thurein','123')" class="demo-chip">Thurein Htun</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div>
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-globe"></i></div>
+        <div class="brand-title">IT Operations<br>Portal</div>
+      </div>
+      <nav class="nav-menu">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+        <button onclick="switchTab('daily-check')" id="nav-daily-check" class="nav-btn"><i class="fa-solid fa-square-check"></i> Daily Check</button>
+        <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn"><i class="fa-solid fa-list-check"></i> Task Management</button>
+        <button onclick="switchTab('incidents')" id="nav-incidents" class="nav-btn"><i class="fa-solid fa-file-shield"></i> Incident Log</button>
+        <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn"><i class="fa-solid fa-chart-pie"></i> Reports</button>
+        <button onclick="switchTab('kpi')" id="nav-kpi" class="nav-btn"><i class="fa-solid fa-chart-line"></i> KPI</button>
+        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn"><i class="fa-solid fa-users-gear"></i> Accounts & Settings</button>
+      </nav>
+    </div>
+    <div class="user-footer">
+      <div id="active-user-avatar" class="avatar">HK</div>
+      <div style="flex:1;overflow:hidden;">
+        <div id="active-user-name" class="user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Htet Aung Khant</div>
+        <div id="active-user-role" class="user-role">IT Manager</div>
+      </div>
+      <button onclick="handleLogout()" class="logout-btn" title="Sign Out"><i class="fa-solid fa-power-off"></i></button>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div>
+        <h2 id="page-title" class="page-title">Dashboard</h2>
+        <p id="page-subtitle" class="page-subtitle">Overview of IT Operations</p>
+      </div>
+      <div class="header-right">
+        <span id="role-permission-badge" class="role-indicator role-staff">Staff Mode</span>
+        <span id="sync-badge" class="sync-badge"><span class="dot"></span> Live Sync</span>
+        <div class="date-box">
+          <i class="fa-regular fa-calendar" style="color:#2563eb;"></i>
+          <span id="current-date-display">Loading...</span>
+        </div>
+        <button onclick="switchTab('incidents')" class="bell-btn">
+          <i class="fa-regular fa-bell"></i>
+          <span id="bell-count" class="bell-badge">1</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <!-- 1. DASHBOARD -->
+      <section id="view-dashboard">
+        <div class="stats-grid">
+          <div onclick="switchTab('daily-check')" class="stat-card card-green">
+            <div class="stat-title">Total CCTV Checks</div>
+            <div class="stat-body"><i class="fa-solid fa-video stat-icon" style="color:#059669;"></i><div><div id="dash-cctv-count" class="stat-num">25</div><div class="stat-sub">This Month</div></div></div>
+          </div>
+          <div onclick="switchTab('daily-check')" class="stat-card card-blue">
+            <div class="stat-title">Total Network Checks</div>
+            <div class="stat-body"><i class="fa-solid fa-globe stat-icon" style="color:#2563eb;"></i><div><div id="dash-net-count" class="stat-num">30</div><div class="stat-sub">This Month</div></div></div>
+          </div>
+          <div onclick="switchTab('tasks')" class="stat-card card-amber">
+            <div class="stat-title">Open Tasks</div>
+            <div class="stat-body"><i class="fa-solid fa-clipboard-list stat-icon" style="color:#d97706;"></i><div><div id="dash-task-count" class="stat-num">5</div><div class="stat-sub">In Progress</div></div></div>
+          </div>
+          <div onclick="switchTab('incidents')" class="stat-card card-rose">
+            <div class="stat-title">Open Incidents</div>
+            <div class="stat-body"><i class="fa-solid fa-triangle-exclamation stat-icon" style="color:#e11d48;"></i><div><div id="dash-inc-count" class="stat-num">2</div><div class="stat-sub">This Month</div></div></div>
+          </div>
+        </div>
+        <div class="dash-lower-grid">
+          <div class="panel"><div class="panel-header"><h3 class="panel-title">Activities This Month</h3></div><canvas id="monthlyChart" height="200"></canvas></div>
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Recent Activities</h3><button onclick="switchTab('daily-check')" class="link-btn">View All</button></div>
+            <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>By</th></tr></thead><tbody id="dash-recent-tbody"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. DAILY CHECK -->
+      <section id="view-daily-check" class="hidden">
+        <div class="check-cards-grid">
+          <div onclick="switchTab('cctv-form')" class="check-card card-green">
+            <div class="check-card-top"><div class="check-icon-box" style="background:#059669;"><i class="fa-solid fa-video"></i></div><div><h3 style="font-size:17px;font-weight:700;">CCTV Check</h3><p style="font-size:12.5px;color:#475569;margin-top:4px;">Record daily CCTV monitoring status, total cameras, issues and screenshots.</p></div></div>
+            <div class="circle-arrow" style="background:#059669;"><i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+          <div onclick="switchTab('network-form')" class="check-card card-blue">
+            <div class="check-card-top"><div class="check-icon-box" style="background:#2563eb;"><i class="fa-solid fa-globe"></i></div><div><h3 style="font-size:17px;font-weight:700;">Network Check</h3><p style="font-size:12.5px;color:#475569;margin-top:4px;">Record daily network speed test, ping check and network status.</p></div></div>
+            <div class="circle-arrow" style="background:#2563eb;"><i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3 class="panel-title">Recent Daily Checks</h3><span style="font-size:11.5px;color:#64748b;">* IT Manager သာ ပြင်ဆင်ခွင့် / ဖျက်ခွင့် ရှိပါသည်</span></div>
+          <table><thead><tr><th>Date</th><th>Type</th><th>Status</th><th>Remark</th><th>By</th><th>Manager Action</th></tr></thead><tbody id="daily-checks-tbody"></tbody></table>
+        </div>
+      </section>
+
+      <!-- 3. CCTV CHECK FORM -->
+      <section id="view-cctv-form" class="hidden">
+        <div class="apk-launcher-bar">
+          <div>
+            <div style="font-size:13.5px;font-weight:700;"><i class="fa-solid fa-mobile-screen-button" style="color:#059669;margin-right:6px;"></i>Open CCTV Apps (နှိပ်သည့် App သာ ပွင့်ပါမည်)</div>
+            <div style="font-size:11.5px;color:#64748b;">မိမိစစ်ဆေးလိုသော CCTV App ခလုတ်ကို တစ်ချက်နှိပ်၍ ဖွင့်ပါ</div>
+          </div>
+          <div class="apk-btn-group">
+            <button type="button" onclick="launchSingleApp('seetong')" class="apk-btn apk-seetong"><i class="fa-solid fa-video"></i> Open Seetong</button>
+            <button type="button" onclick="launchSingleApp('imou')" class="apk-btn apk-imou"><i class="fa-solid fa-camera"></i> Open IMOU</button>
+            <button type="button" onclick="launchSingleApp('hikconnect')" class="apk-btn apk-hik"><i class="fa-solid fa-shield-halved"></i> Open Hik-Connect</button>
+            <button type="button" onclick="downloadPCProtocolSetup()" class="apk-btn apk-pc"><i class="fa-brands fa-windows"></i> PC Setup (.reg)</button>
+          </div>
+        </div>
+        <div class="panel">
+          <form onsubmit="saveCCTVCheck(event)" class="form-grid">
+            <div>
+              <div class="form-row"><label>Ticket Number</label><input id="cctv-ticket" type="text" readonly class="form-control"></div>
+              <div class="form-row"><label>Check Date</label><input id="cctv-date" type="date" required class="form-control"></div>
+              <div class="form-row"><label>Checked By</label><input id="cctv-by" type="text" readonly class="form-control"></div>
+              <div class="form-row"><label>Total Cameras</label><input id="cctv-total" type="number" value="102" oninput="calcOfflineCameras()" required class="form-control"></div>
+              <div class="form-row"><label>Working Cameras</label><input id="cctv-working" type="number" value="100" oninput="calcOfflineCameras()" required class="form-control"></div>
+              <div class="form-row"><label>Offline Cameras</label><input id="cctv-offline" type="number" value="2" readonly class="form-control"></div>
+              <div class="form-row"><label>Overall Status</label><select id="cctv-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Completed</option><option value="Issue Found">Issue Found</option></select></div>
+              <div class="form-row"><label>Remarks</label><textarea id="cctv-remarks" rows="3" class="form-control" placeholder="All 100+ cameras working normally."></textarea></div>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:space-between;border-left:1px solid #e2e8f0;padding-left:20px;">
+              <div>
+                <div style="font-size:13.5px;font-weight:600;margin-bottom:8px;">Screenshot / Evidence</div>
+                <label class="upload-box">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:26px;color:#3b82f6;margin-bottom:4px;"></i>
+                  <div style="font-size:12px;color:#475569;">Click to upload screenshots</div>
+                  <input type="file" accept="image/*" multiple class="hidden" onchange="handleGalleryUpload(event, 'cctv')">
+                </label>
+                <div id="cctv-gallery" class="gallery-grid"></div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+                <button type="button" onclick="clearCCTVForm()" class="btn btn-outline">Clear</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-regular fa-floppy-disk"></i> Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- 4. NETWORK CHECK FORM -->
+      <section id="view-network-form" class="hidden">
+        <div class="panel">
+          <form onsubmit="saveNetworkCheck(event)" class="form-grid">
+            <div>
+              <div class="form-row"><label>Ticket Number</label><input id="net-ticket" type="text" readonly class="form-control"></div>
+              <div class="form-row"><label>Check Date</label><input id="net-date" type="date" required class="form-control"></div>
+              <div class="form-row"><label>Checked By</label><input id="net-by" type="text" readonly class="form-control"></div>
+              <div class="form-row"><label>Download (Mbps)</label><input id="net-dl" type="number" step="0.01" value="250" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Upload (Mbps)</label><input id="net-ul" type="number" step="0.01" value="180" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Ping (ms)</label><input id="net-ping" type="number" value="5" oninput="updateSpeedPreview()" required class="form-control"></div>
+              <div class="form-row"><label>Status</label><select id="net-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Good</option><option value="Issue Found">Slow / Issue</option></select></div>
+              <div class="form-row"><label>Remarks</label><textarea id="net-remarks" rows="3" class="form-control" placeholder="Network speed is stable."></textarea></div>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:space-between;border-left:1px solid #e2e8f0;padding-left:20px;">
+              <div>
+                <div style="font-size:13.5px;font-weight:600;margin-bottom:8px;">Screenshot / Evidence</div>
+                <div style="background:#0f172a;color:#fff;border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
+                  <div style="font-size:10.5px;color:#94a3b8;">SPEEDTEST LIVE PREVIEW</div>
+                  <div style="display:flex;justify-content:space-around;margin:10px 0;">
+                    <div><div style="font-size:10px;color:#34d399;">DOWNLOAD</div><div id="preview-dl" style="font-size:22px;font-weight:800;">250</div></div>
+                    <div><div style="font-size:10px;color:#818cf8;">UPLOAD</div><div id="preview-ul" style="font-size:22px;font-weight:800;">180</div></div>
+                  </div>
+                  <div style="font-size:10.5px;color:#94a3b8;">Ping <span id="preview-ping">5</span> ms</div>
+                </div>
+                <label class="upload-box">
+                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:22px;color:#3b82f6;"></i>
+                  <div style="font-size:12px;color:#475569;">Upload speedtest image</div>
+                  <input type="file" accept="image/*" multiple class="hidden" onchange="handleGalleryUpload(event, 'net')">
+                </label>
+                <div id="net-gallery" class="gallery-grid"></div>
+              </div>
+              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+                <button type="button" onclick="switchTab('daily-check')" class="btn btn-outline">Clear</button>
+                <button type="submit" class="btn btn-primary"><i class="fa-regular fa-floppy-disk"></i> Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- 5. TASK MANAGEMENT -->
+      <section id="view-tasks" class="hidden">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="filter-group">
+              <button onclick="filterTasks('All', this)" id="tbtn-all" class="filter-btn active">All</button>
+              <button onclick="filterTasks('Open', this)" id="tbtn-open" class="filter-btn">Open</button>
+              <button onclick="filterTasks('In Progress', this)" id="tbtn-prog" class="filter-btn">In Progress</button>
+              <button onclick="filterTasks('Completed', this)" id="tbtn-comp" class="filter-btn">Completed</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="task-search" oninput="renderTasks()" type="text" placeholder="Search tasks..." class="form-control" style="width:200px;">
+              <button onclick="openTaskModal()" class="btn btn-primary">+ New Task</button>
+            </div>
+          </div>
+          <table><thead><tr><th>Task No</th><th>Task Name</th><th>Assigned To</th><th>Priority</th><th>Status</th><th>Due Date</th><th>Manager Action</th></tr></thead><tbody id="tasks-tbody"></tbody></table>
+        </div>
+      </section>
+
+      <!-- 6. INCIDENT LOG -->
+      <section id="view-incidents" class="hidden">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="filter-group">
+              <button onclick="filterIncidents('All', this)" id="ibtn-all" class="filter-btn active">All</button>
+              <button onclick="filterIncidents('Open', this)" id="ibtn-open" class="filter-btn">Open</button>
+              <button onclick="filterIncidents('Resolved', this)" id="ibtn-res" class="filter-btn">Resolved</button>
+              <button onclick="filterIncidents('Closed', this)" id="ibtn-close" class="filter-btn">Closed</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <input id="inc-search" oninput="renderIncidents()" type="text" placeholder="Search incidents..." class="form-control" style="width:200px;">
+              <button onclick="openIncidentModal()" class="btn btn-danger">+ Log Incident</button>
+            </div>
+          </div>
+          <table><thead><tr><th>Incident No</th><th>Date</th><th>Category</th><th>Issue</th><th>Logged By</th><th>Status</th><th>Manager Action</th></tr></thead><tbody id="incidents-tbody"></tbody></table>
+        </div>
+      </section>
+
+      <!-- 7. REPORTS -->
+      <section id="view-reports" class="hidden">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="filter-group">
+              <button onclick="setReportRange('Today', this)" class="filter-btn">Today</button>
+              <button onclick="setReportRange('This Week', this)" class="filter-btn">This Week</button>
+              <button onclick="setReportRange('This Month', this)" class="filter-btn active">This Month</button>
+              <button onclick="setReportRange('This Year', this)" class="filter-btn">This Year</button>
+            </div>
+            <button onclick="exportCSV()" class="btn btn-outline"><i class="fa-solid fa-file-export"></i> Export CSV</button>
+          </div>
+          <div class="stats-grid" style="margin-bottom:0;">
+            <div class="stat-card card-green"><div class="stat-title">CCTV Checks</div><div id="rep-cctv" class="stat-num">25</div></div>
+            <div class="stat-card card-blue"><div class="stat-title">Network Checks</div><div id="rep-net" class="stat-num">30</div></div>
+            <div class="stat-card card-amber"><div class="stat-title">Tasks Completed</div><div id="rep-tasks" class="stat-num">18</div></div>
+            <div class="stat-card card-rose"><div class="stat-title">Incidents</div><div id="rep-inc" class="stat-num">6</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. KPI -->
+      <section id="view-kpi" class="hidden">
+        <div class="dash-lower-grid">
+          <div class="panel">
+            <div class="panel-header"><h3 class="panel-title">Individual KPI</h3><select id="kpi-member-select" onchange="renderKPI()" class="form-control" style="width:180px;padding:5px 8px;"></select></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:16px;margin-top:12px;">
+              <div style="font-size:13px;line-height:2.3;">
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>CCTV Checks</span><b id="kpi-ind-cctv">25</b></div>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Network Checks</span><b id="kpi-ind-net">25</b></div>
+                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Tasks Completed</span><b id="kpi-ind-task">18</b></div>
+                <div style="display:flex;justify-content:space-between;"><span>Incidents Resolved</span><b id="kpi-ind-inc">5</b></div>
+              </div>
+              <div style="text-align:center;">
+                <div id="kpi-score-circle" style="width:105px;height:105px;border-radius:50%;border:9px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px;font-weight:800;">95%</div>
+                <div style="font-size:12px;color:#64748b;margin-top:6px;font-weight:600;">KPI Score</div>
+              </div>
+            </div>
+          </div>
+          <div class="panel"><div class="panel-header"><h3 class="panel-title">Team Performance</h3></div><canvas id="kpiChart" height="150"></canvas></div>
+        </div>
+      </section>
+
+      <!-- 9. ACCOUNTS & SETTINGS -->
+      <section id="view-settings" class="hidden">
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">IT Team Accounts (ဝန်ထမ်းအကောင့်စာရင်း)</h3>
+              <p style="font-size:12px;color:#64748b;">IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ ပြင်ဆင်/ဖျက်ပိုင်ခွင့် ရှိသည်</p>
+            </div>
+          </div>
+          <form id="manager-add-user-form" onsubmit="addUserAccount(event)" style="display:grid;grid-template-columns:repeat(5, 1fr);gap:8px;margin-bottom:14px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;">
+            <input id="new-u-name" type="text" required placeholder="Full Name" class="form-control">
+            <input id="new-u-user" type="text" required placeholder="Username" class="form-control">
+            <input id="new-u-pass" type="text" required placeholder="Password" class="form-control">
+            <select id="new-u-role" class="form-control">
+              <option value="IT Support">IT Support</option>
+              <option value="IT Support Specialist">IT Support Specialist</option>
+              <option value="IT Manager">IT Manager</option>
+            </select>
+            <button type="submit" class="btn btn-primary">+ Add Account</button>
+          </form>
+          <table><thead><tr><th>Full Name</th><th>Username</th><th>Password</th><th>Role</th><th>Manager Action</th></tr></thead><tbody id="users-tbody"></tbody></table>
+        </div>
+
+        <div class="dash-lower-grid">
+          <div class="panel">
+            <h3 class="panel-title" style="margin-bottom:6px;">GitHub Cloud Database & Team Invite Link</h3>
+            <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Token ထည့်ပြီး <b>Copy Team Auto-Sync Link</b> ကိုနှိပ်၍ ဝန်ထမ်းများကို ပို့ပေးပါက ဝန်ထမ်းတိုင်း Token ထည့်စရာမလိုဘဲ အလိုအလျောက် ချိတ်ဆက်ပြီး ဖြစ်သွားပါမည်။</p>
+            <div class="form-row"><label>GitHub Owner</label><input id="gh-owner" type="text" value="DaeVid78" class="form-control"></div>
+            <div class="form-row"><label>Repository Name</label><input id="gh-repo" type="text" value="it-operations-portal" class="form-control"></div>
+            <div class="form-row"><label>GitHub Token</label><input id="gh-token" type="password" placeholder="ghp_... or github_pat_..." class="form-control"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
+              <button onclick="saveGitHubConfig()" class="btn btn-primary">Save & Sync</button>
+              <button onclick="copyTeamSyncLink()" class="btn btn-success"><i class="fa-solid fa-share-nodes"></i> Copy Team Auto-Sync Link</button>
+              <button onclick="pullFromGitHub()" class="btn btn-outline">Reload Data</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3 class="panel-title" style="margin-bottom:6px;">CCTV App Package Configuration</h3>
+            <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Android ဖုန်းတွင် CCTV App များ တိုက်ရိုက်ပွင့်စေရန် Package Name များ—</p>
+            <div class="form-row"><label>Hik-Connect</label><input id="pkg-hik" type="text" value="com.connect.enduser" class="form-control"></div>
+            <div class="form-row"><label>Seetong</label><input id="pkg-seetong" type="text" value="com.seetong.app" class="form-control"></div>
+            <div class="form-row"><label>IMOU</label><input id="pkg-imou" type="text" value="com.mm.android.lc" class="form-control"></div>
+            <button onclick="saveAppConfig()" class="btn btn-primary" style="margin-top:8px;">Save App Settings</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- TASK MODAL -->
+  <div id="task-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 class="panel-title" style="margin-bottom:14px;">Create New Task</h3>
+      <form onsubmit="submitNewTask(event)">
+        <div class="form-row"><label>Task Name</label><input id="m-task-name" type="text" required class="form-control"></div>
+        <div class="form-row"><label>Assigned To</label><select id="m-task-user" class="form-control"></select></div>
+        <div class="form-row"><label>Priority</label><select id="m-task-priority" class="form-control"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+        <div class="form-row"><label>Due Date</label><input id="m-task-due" type="date" required class="form-control"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;">
+          <button type="button" onclick="closeModals()" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- INCIDENT MODAL -->
+  <div id="inc-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 class="panel-title" style="margin-bottom:14px;">Log New Incident</h3>
+      <form onsubmit="submitNewIncident(event)">
+        <div class="form-row"><label>Category</label><select id="m-inc-cat" class="form-control"><option>CCTV</option><option>Network</option><option>Printer</option><option>PC</option></select></div>
+        <div class="form-row"><label>Issue Description</label><input id="m-inc-issue" type="text" required class="form-control"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;">
+          <button type="button" onclick="closeModals()" class="btn btn-outline">Cancel</button>
+          <button type="submit" class="btn btn-danger">Log Incident</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const DB_SCHEMA_VERSION = 'v6_team_sync_2026';
+    const defaultDB = {
+      schemaVersion: DB_SCHEMA_VERSION,
+      users: [
+        { username: 'yair', password: '123', name: 'Yair Myat Aung', role: 'IT Support' },
+        { username: 'daevid', password: '123', name: 'Dae Vid', role: 'IT Support' },
+        { username: 'thaeei', password: '123', name: 'Thae Ei Mon', role: 'IT Support Specialist' },
+        { username: 'thurein', password: '123', name: 'Thurein Htun', role: 'IT Support Specialist' },
+        { username: 'htet', password: '123', name: 'Htet Aung Khant', role: 'IT Manager' }
+      ],
+      cctvCount: 25,
+      networkCount: 30,
+      dailyChecks: [
+        { date: '15 Oct 2026', type: 'CCTV', status: 'Completed', remark: 'All cameras working normally', by: 'Yair Myat Aung' },
+        { date: '15 Oct 2026', type: 'Network', status: 'Completed', remark: 'Speed: 250 Mbps', by: 'Dae Vid' },
+        { date: '14 Oct 2026', type: 'CCTV', status: 'Issue Found', remark: 'Camera 14 Offline', by: 'Thae Ei Mon' },
+        { date: '14 Oct 2026', type: 'Network', status: 'Completed', remark: 'Speed: 220 Mbps', by: 'Thurein Htun' }
+      ],
+      tasks: [
+        { no: 'TASK-001', name: 'Replace Switch', assigned: 'Yair Myat Aung', priority: 'High', status: 'In Progress', due: '16 Oct 2026' },
+        { no: 'TASK-002', name: 'Install Printer', assigned: 'Dae Vid', priority: 'Medium', status: 'Open', due: '17 Oct 2026' },
+        { no: 'TASK-003', name: 'Configure Firewall', assigned: 'Thurein Htun', priority: 'High', status: 'Completed', due: '15 Oct 2026' },
+        { no: 'TASK-004', name: 'Check Backup', assigned: 'Thae Ei Mon', priority: 'Medium', status: 'In Progress', due: '16 Oct 2026' }
+      ],
+      incidents: [
+        { no: 'INC-001', date: '15 Oct 2026', category: 'CCTV', issue: 'Camera 14 Offline', by: 'Thae Ei Mon', status: 'Open' },
+        { no: 'INC-002', date: '14 Oct 2026', category: 'Network', issue: 'Internet Down', by: 'Dae Vid', status: 'Resolved' }
+      ]
+    };
+
+    let savedDB = JSON.parse(localStorage.getItem('it_portal_db') || 'null');
+    if (!savedDB || savedDB.schemaVersion !== DB_SCHEMA_VERSION || !savedDB.users.some(u => u.username === 'htet')) {
+      savedDB = defaultDB;
+      localStorage.setItem('it_portal_db', JSON.stringify(savedDB));
+    }
+    let db = savedDB;
+    let currentUser = JSON.parse(localStorage.getItem('it_portal_current_user')) || null;
+    if (currentUser && !db.users.some(u => u.username === currentUser.username)) currentUser = null;
+
+    let cctvImages = [], netImages = [], taskFilter = 'All', incFilter = 'All';
+
+    function isManager() { return currentUser && currentUser.role === 'IT Manager'; }
+    function requireManagerAlert() { alert('IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ ပြင်ဆင်ခွင့်နှင့် ဖျက်ခွင့် ရှိပါသည်။'); }
+    function getInitials(n) { return (n || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
+    function fillDemoLogin(u, p) { document.getElementById('login-username').value = u; document.getElementById('login-password').value = p; }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim().toLowerCase();
+      const p = document.getElementById('login-password').value.trim();
+      const found = db.users.find(a => a.username.toLowerCase() === u && a.password === p);
+      if (!found) { document.getElementById('login-error').classList.remove('hidden'); return; }
+      document.getElementById('login-error').classList.add('hidden');
+      currentUser = found;
+      localStorage.setItem('it_portal_current_user', JSON.stringify(currentUser));
+      applyLoggedInUser();
+    }
+
+    function applyLoggedInUser() {
+      if (!currentUser) { document.getElementById('login-screen').classList.remove('hidden'); return; }
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('active-user-name').innerText = currentUser.name;
+      document.getElementById('active-user-role').innerText = currentUser.role;
+      document.getElementById('active-user-avatar').innerText = getInitials(currentUser.name);
+
+      const rb = document.getElementById('role-permission-badge');
+      rb.className = isManager() ? 'role-indicator role-manager' : 'role-indicator role-staff';
+      rb.innerHTML = isManager() ? '<i class="fa-solid fa-crown"></i> Manager Mode' : '<i class="fa-solid fa-lock"></i> Staff Mode';
+
+      const form = document.getElementById('manager-add-user-form');
+      if (form) form.classList.toggle('hidden', !isManager());
+
+      document.getElementById('cctv-by').value = currentUser.name;
+      document.getElementById('net-by').value = currentUser.name;
+      renderAll();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('it_portal_current_user');
+      document.getElementById('login-password').value = '';
+      document.getElementById('login-screen').classList.remove('hidden');
+    }
+
+    async function addUserAccount(e) {
+      e.preventDefault();
+      if (!isManager()) return requireManagerAlert();
+      const name = document.getElementById('new-u-name').value.trim();
+      const username = document.getElementById('new-u-user').value.trim().toLowerCase();
+      const password = document.getElementById('new-u-pass').value.trim();
+      const role = document.getElementById('new-u-role').value;
+      if (db.users.some(u => u.username.toLowerCase() === username)) return alert('Username ရှိပြီးသားဖြစ်ပါသည်!');
+      db.users.push({ username, password, name, role });
+      document.getElementById('new-u-name').value = '';
+      document.getElementById('new-u-user').value = '';
+      document.getElementById('new-u-pass').value = '';
+      renderAll(); await pushToGitHub();
+    }
+
+    async function editUserAccount(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const u = db.users[idx];
+      const name = prompt('Edit Full Name:', u.name); if (!name) return;
+      const password = prompt('Edit Password:', u.password); if (!password) return;
+      const role = prompt('Edit Role:', u.role); if (!role) return;
+      db.users[idx] = { ...u, name: name.trim(), password: password.trim(), role: role.trim() };
+      renderAll(); await pushToGitHub();
+    }
+
+    async function deleteUserAccount(idx) {
+      if (!isManager()) return requireManagerAlert();
+      if (db.users.length <= 1) return;
+      if (!confirm(`${db.users[idx].name} အကောင့်ကို ဖျက်ရန် သေချာပါသလား?`)) return;
+      db.users.splice(idx, 1);
+      renderAll(); await pushToGitHub();
+    }
+
+    function renderUsersList() {
+      const tbody = document.getElementById('users-tbody');
+      if (tbody) {
+        tbody.innerHTML = db.users.map((u, idx) => `
+          <tr>
+            <td><span class="mini-avatar">${getInitials(u.name)}</span><b>${u.name}</b></td>
+            <td><code>${u.username}</code></td>
+            <td><code>${isManager() ? u.password : '••••••'}</code></td>
+            <td><span class="badge ${u.role === 'IT Manager' ? 'b-amber' : 'b-blue'}">${u.role}</span></td>
+            <td>${isManager()
+              ? `<button onclick="editUserAccount(${idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i></button>
+                 <button onclick="deleteUserAccount(${idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+              : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> Manager Only</span>`}</td>
+          </tr>
+        `).join('');
+      }
+      [document.getElementById('kpi-member-select'), document.getElementById('m-task-user')].forEach(sel => {
+        if (!sel) return;
+        const val = sel.value;
+        sel.innerHTML = db.users.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+        if (val && db.users.some(u => u.name === val)) sel.value = val;
+      });
+    }
+
+    function updateRealTimeDate() {
+      document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-GB', {
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+      });
+    }
+
+    function getLocalISODate() {
+      const now = new Date();
+      return new Date(now - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+
+    function calcOfflineCameras() {
+      const total = parseInt(document.getElementById('cctv-total').value) || 0;
+      const working = parseInt(document.getElementById('cctv-working').value) || 0;
+      const offline = Math.max(0, total - working);
+      document.getElementById('cctv-offline').value = offline;
+      document.getElementById('cctv-status').value = offline > 0 ? 'Issue Found' : 'Completed';
+    }
+
+    function updateSpeedPreview() {
+      const dl = parseFloat(document.getElementById('net-dl').value) || 0;
+      const ul = parseFloat(document.getElementById('net-ul').value) || 0;
+      const ping = parseInt(document.getElementById('net-ping').value) || 0;
+      document.getElementById('preview-dl').innerText = dl;
+      document.getElementById('preview-ul').innerText = ul;
+      document.getElementById('preview-ping').innerText = ping;
+      document.getElementById('net-status').value = (dl < 50 || ping > 100) ? 'Issue Found' : 'Completed';
+    }
+
+    function handleGalleryUpload(e, type) {
+      Array.from(e.target.files).forEach(file => {
+        const r = new FileReader();
+        r.onload = () => { (type === 'cctv' ? cctvImages : netImages).push(r.result); renderGallery(type); };
+        r.readAsDataURL(file);
+      });
+    }
+
+    function renderGallery(type) {
+      const list = type === 'cctv' ? cctvImages : netImages;
+      document.getElementById(`${type}-gallery`).innerHTML = list.map((src, i) => `
+        <div class="gallery-item"><img src="${src}"><button type="button" onclick="removeGalleryImage('${type}', ${i})" class="gallery-remove"><i class="fa-solid fa-xmark"></i></button></div>
+      `).join('');
+    }
+
+    function removeGalleryImage(type, idx) { (type === 'cctv' ? cctvImages : netImages).splice(idx, 1); renderGallery(type); }
+    function clearCCTVForm() { cctvImages = []; renderGallery('cctv'); document.getElementById('cctv-remarks').value = ''; }
+
+    function saveAppConfig() {
+      localStorage.setItem('cctv_app_cfg', JSON.stringify({
+        hik: document.getElementById('pkg-hik').value.trim(),
+        seetong: document.getElementById('pkg-seetong').value.trim(),
+        imou: document.getElementById('pkg-imou').value.trim()
+      }));
+      alert('Saved!');
+    }
+
+    function launchSingleApp(appKey) {
+      const saved = JSON.parse(localStorage.getItem('cctv_app_cfg') || '{}');
+      const pkgs = { seetong: saved.seetong || 'com.seetong.app', imou: saved.imou || 'com.mm.android.lc', hikconnect: saved.hik || 'com.connect.enduser' };
+      const schemes = { seetong: 'seetong://', imou: 'imoulife://', hikconnect: 'hikconnect://' };
+      window.location.href = /Android/i.test(navigator.userAgent) ? `intent://#Intent;package=${pkgs[appKey]};end` : schemes[appKey];
+    }
+
+    function downloadPCProtocolSetup() {
+      const reg = `Windows Registry Editor Version 5.00\r\n\r\n[HKEY_CLASSES_ROOT\\hikconnect]\r\n@="URL:Hik-Connect"\r\n"URL Protocol"=""\r\n[HKEY_CLASSES_ROOT\\hikconnect\\shell\\open\\command]\r\n@="\\"C:\\\\Program Files (x86)\\\\Hikvision\\\\iVMS-4200 Site\\\\iVMS-4200 Client\\\\Client\\\\iVMS-4200.Framework.C.exe\\""`;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([reg], { type: 'text/plain' }));
+      a.download = 'CCTV-PC-Setup.reg'; a.click();
+    }
+
+    const pageMeta = {
+      'dashboard': { title: 'Dashboard', sub: 'Overview of IT Operations' },
+      'daily-check': { title: 'Daily Check', sub: 'Record the type of check you want to perform' },
+      'cctv-form': { title: 'CCTV Check', sub: 'Record daily CCTV monitoring result' },
+      'network-form': { title: 'Network Check', sub: 'Record daily network test result' },
+      'tasks': { title: 'Task Management', sub: 'Create and manage IT team tasks' },
+      'incidents': { title: 'Incident Log', sub: 'Record and track IT incidents' },
+      'reports': { title: 'Reports', sub: 'View and export IT operation reports' },
+      'kpi': { title: 'Team KPI', sub: 'Individual and team performance' },
+      'settings': { title: 'Accounts & Settings', sub: 'Manage Staff Accounts & GitHub Sync' }
+    };
+
+    function switchTab(tabId) {
+      document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const navKey = (tabId === 'cctv-form' || tabId === 'network-form') ? 'daily-check' : tabId;
+      document.getElementById(`nav-${navKey}`)?.classList.add('active');
+      document.getElementById('page-title').innerText = pageMeta[tabId].title;
+      document.getElementById('page-subtitle').innerText = pageMeta[tabId].sub;
+
+      const today = getLocalISODate();
+      if (tabId === 'cctv-form') {
+        document.getElementById('cctv-date').value = today;
+        document.getElementById('cctv-ticket').value = `CCTV-${today.replace(/-/g, '')}-00${db.cctvCount + 1}`;
+        if (currentUser) document.getElementById('cctv-by').value = currentUser.name;
+      }
+      if (tabId === 'network-form') {
+        document.getElementById('net-date').value = today;
+        document.getElementById('net-ticket').value = `NET-${today.replace(/-/g, '')}-00${db.networkCount + 1}`;
+        if (currentUser) document.getElementById('net-by').value = currentUser.name;
+      }
+      renderAll();
+    }
+
+    function renderAll() {
+      localStorage.setItem('it_portal_db', JSON.stringify(db));
+      renderUsersList();
+      const openTasks = db.tasks.filter(t => t.status !== 'Completed').length;
+      const openIncs = db.incidents.filter(i => i.status === 'Open').length;
+
+      document.getElementById('dash-cctv-count').innerText = db.cctvCount;
+      document.getElementById('dash-net-count').innerText = db.networkCount;
+      document.getElementById('dash-task-count').innerText = openTasks;
+      document.getElementById('dash-inc-count').innerText = openIncs;
+      document.getElementById('bell-count').innerText = openIncs;
+
+      document.getElementById('rep-cctv').innerText = db.cctvCount;
+      document.getElementById('rep-net').innerText = db.networkCount;
+      document.getElementById('rep-tasks').innerText = db.tasks.filter(t => t.status === 'Completed').length;
+      document.getElementById('rep-inc').innerText = db.incidents.length;
+
+      document.getElementById('dash-recent-tbody').innerHTML = db.dailyChecks.slice(0, 5).map(c => `
+        <tr><td>${c.date}</td><td><b>${c.type}</b></td><td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td></tr>
+      `).join('');
+
+      document.getElementById('daily-checks-tbody').innerHTML = db.dailyChecks.map((c, idx) => `
+        <tr>
+          <td>${c.date}</td><td><b>${c.type}</b></td>
+          <td><span class="badge ${c.status === 'Completed' ? 'b-green' : 'b-amber'}">${c.status}</span></td>
+          <td>${c.remark}</td><td><span class="mini-avatar">${getInitials(c.by)}</span>${c.by}</td>
+          <td>${isManager()
+            ? `<button onclick="editDailyCheck(${idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+               <button onclick="deleteDailyCheck(${idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+            : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+        </tr>
+      `).join('');
+
+      renderTasks(); renderIncidents(); renderKPI();
+    }
+
+    async function editDailyCheck(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const item = db.dailyChecks[idx];
+      const rem = prompt('Edit Remark:', item.remark); if (rem === null) return;
+      const st = prompt('Edit Status (Completed / Issue Found):', item.status); if (st === null) return;
+      db.dailyChecks[idx].remark = rem.trim() || item.remark;
+      db.dailyChecks[idx].status = st.trim() === 'Issue Found' ? 'Issue Found' : 'Completed';
+      renderAll(); await pushToGitHub();
+    }
+
+    async function deleteDailyCheck(idx) {
+      if (!isManager()) return requireManagerAlert();
+      if (!confirm('ဖျက်ရန် သေချာပါသလား?')) return;
+      const rem = db.dailyChecks.splice(idx, 1)[0];
+      if (rem.type === 'CCTV' && db.cctvCount > 0) db.cctvCount--;
+      if (rem.type === 'Network' && db.networkCount > 0) db.networkCount--;
+      renderAll(); await pushToGitHub();
+    }
+
+    function renderTasks() {
+      document.getElementById('tbtn-all').innerText = `All (${db.tasks.length})`;
+      document.getElementById('tbtn-open').innerText = `Open (${db.tasks.filter(t=>t.status==='Open').length})`;
+      document.getElementById('tbtn-prog').innerText = `In Progress (${db.tasks.filter(t=>t.status==='In Progress').length})`;
+      document.getElementById('tbtn-comp').innerText = `Completed (${db.tasks.filter(t=>t.status==='Completed').length})`;
+
+      const q = (document.getElementById('task-search')?.value || '').toLowerCase();
+      document.getElementById('tasks-tbody').innerHTML = db.tasks
+        .map((t, idx) => ({ ...t, idx }))
+        .filter(t => (taskFilter === 'All' || t.status === taskFilter) && t.name.toLowerCase().includes(q))
+        .map(t => {
+          const pri = t.priority === 'High' ? 'b-rose' : t.priority === 'Medium' ? 'b-amber' : 'b-blue';
+          const st = t.status === 'Completed' ? 'b-green' : t.status === 'In Progress' ? 'b-blue' : 'b-amber';
+          return `
+            <tr>
+              <td><b>${t.no}</b></td><td><b>${t.name}</b></td>
+              <td><span class="mini-avatar">${getInitials(t.assigned)}</span>${t.assigned}</td>
+              <td><span class="badge ${pri}">${t.priority}</span></td>
+              <td><span ${isManager() ? `onclick="cycleTaskStatus(${t.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${t.status}</span></td>
+              <td>${t.due}</td>
+              <td>${isManager()
+                ? `<button onclick="editTask(${t.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                   <button onclick="deleteTask(${t.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+                : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+            </tr>
+          `;
+        }).join('');
+    }
+
+    async function cycleTaskStatus(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const order = ['Open', 'In Progress', 'Completed'];
+      db.tasks[idx].status = order[(order.indexOf(db.tasks[idx].status) + 1) % order.length];
+      renderAll(); await pushToGitHub();
+    }
+
+    async function editTask(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const t = db.tasks[idx];
+      const name = prompt('Edit Task Name:', t.name); if (name === null) return;
+      const status = prompt('Edit Status (Open / In Progress / Completed):', t.status); if (status === null) return;
+      db.tasks[idx] = { ...t, name: name.trim() || t.name, status: status.trim() || t.status };
+      renderAll(); await pushToGitHub();
+    }
+
+    async function deleteTask(idx) {
+      if (!isManager()) return requireManagerAlert();
+      if (!confirm('ဖျက်ရန် သေချာပါသလား?')) return;
+      db.tasks.splice(idx, 1); renderAll(); await pushToGitHub();
+    }
+
+    function filterTasks(s, btn) { taskFilter = s; btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderTasks(); }
+
+    function renderIncidents() {
+      document.getElementById('ibtn-all').innerText = `All (${db.incidents.length})`;
+      document.getElementById('ibtn-open').innerText = `Open (${db.incidents.filter(i=>i.status==='Open').length})`;
+      document.getElementById('ibtn-res').innerText = `Resolved (${db.incidents.filter(i=>i.status==='Resolved').length})`;
+      document.getElementById('ibtn-close').innerText = `Closed (${db.incidents.filter(i=>i.status==='Closed').length})`;
+
+      const q = (document.getElementById('inc-search')?.value || '').toLowerCase();
+      document.getElementById('incidents-tbody').innerHTML = db.incidents
+        .map((i, idx) => ({ ...i, idx }))
+        .filter(i => (incFilter === 'All' || i.status === incFilter) && i.issue.toLowerCase().includes(q))
+        .map(i => {
+          const st = i.status === 'Open' ? 'b-rose' : i.status === 'Resolved' ? 'b-green' : 'b-teal';
+          const byName = i.by || 'Yair Myat Aung';
+          return `
+            <tr>
+              <td><b>${i.no}</b></td><td>${i.date}</td><td><b>${i.category}</b></td><td>${i.issue}</td>
+              <td><span class="mini-avatar">${getInitials(byName)}</span>${byName}</td>
+              <td><span ${isManager() ? `onclick="cycleIncidentStatus(${i.idx})" style="cursor:pointer;"` : ''} class="badge ${st}">${i.status}</span></td>
+              <td>${isManager()
+                ? `<button onclick="editIncident(${i.idx})" class="action-btn action-edit"><i class="fa-solid fa-pen"></i> Edit</button>
+                   <button onclick="deleteIncident(${i.idx})" class="action-btn action-del"><i class="fa-regular fa-trash-can"></i></button>`
+                : `<span class="view-only-tag"><i class="fa-solid fa-lock"></i> View Only</span>`}</td>
+            </tr>
+          `;
+        }).join('');
+    }
+
+    async function cycleIncidentStatus(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const order = ['Open', 'Resolved', 'Closed'];
+      db.incidents[idx].status = order[(order.indexOf(db.incidents[idx].status) + 1) % order.length];
+      renderAll(); await pushToGitHub();
+    }
+
+    async function editIncident(idx) {
+      if (!isManager()) return requireManagerAlert();
+      const inc = db.incidents[idx];
+      const issue = prompt('Edit Issue:', inc.issue); if (issue === null) return;
+      const status = prompt('Edit Status (Open / Resolved / Closed):', inc.status); if (status === null) return;
+      db.incidents[idx] = { ...inc, issue: issue.trim() || inc.issue, status: status.trim() || inc.status };
+      renderAll(); await pushToGitHub();
+    }
+
+    async function deleteIncident(idx) {
+      if (!isManager()) return requireManagerAlert();
+      if (!confirm('ဖျက်ရန် သေချာပါသလား?')) return;
+      db.incidents.splice(idx, 1); renderAll(); await pushToGitHub();
+    }
+
+    function filterIncidents(s, btn) { incFilter = s; btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderIncidents(); }
+
+    function renderKPI() {
+      const m = document.getElementById('kpi-member-select')?.value || (currentUser ? currentUser.name : 'Yair Myat Aung');
+      const cctv = db.dailyChecks.filter(c => c.by === m && c.type === 'CCTV').length + 18;
+      const net = db.dailyChecks.filter(c => c.by === m && c.type === 'Network').length + 20;
+      const tasks = db.tasks.filter(t => t.assigned === m && t.status === 'Completed').length + 14;
+      const score = Math.min(100, Math.round(((cctv + net + tasks) / 65) * 100));
+      document.getElementById('kpi-ind-cctv').innerText = cctv;
+      document.getElementById('kpi-ind-net').innerText = net;
+      document.getElementById('kpi-ind-task').innerText = tasks;
+      document.getElementById('kpi-score-circle').innerText = `${score}%`;
+    }
+
+    function setReportRange(r, btn) {
+      btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+      const mult = r === 'Today' ? 0.1 : r === 'This Week' ? 0.35 : r === 'This Year' ? 8 : 1;
+      document.getElementById('rep-cctv').innerText = Math.max(1, Math.round(db.cctvCount * mult));
+      document.getElementById('rep-net').innerText = Math.max(1, Math.round(db.networkCount * mult));
+    }
+
+    async function saveCCTVCheck(e) {
+      e.preventDefault();
+      db.cctvCount++;
+      const offline = parseInt(document.getElementById('cctv-offline').value) || 0;
+      const status = document.getElementById('cctv-status').value;
+      const remark = document.getElementById('cctv-remarks').value || (offline > 0 ? `${offline} Camera(s) Offline` : 'All cameras working normally');
+      const by = currentUser ? currentUser.name : document.getElementById('cctv-by').value;
+      const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      db.dailyChecks.unshift({ date: dateStr, type: 'CCTV', status, remark, by });
+      if (offline > 0) db.incidents.unshift({ no: `INC-00${db.incidents.length + 1}`, date: dateStr, category: 'CCTV', issue: remark, by, status: 'Open' });
+      clearCCTVForm(); await pushToGitHub(); switchTab('daily-check');
+    }
+
+    async function saveNetworkCheck(e) {
+      e.preventDefault();
+      db.networkCount++;
+      const dl = document.getElementById('net-dl').value;
+      const by = currentUser ? currentUser.name : document.getElementById('net-by').value;
+      db.dailyChecks.unshift({
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        type: 'Network', status: document.getElementById('net-status').value,
+        remark: document.getElementById('net-remarks').value || `Speed: ${dl} Mbps`, by
+      });
+      netImages = []; renderGallery('net'); await pushToGitHub(); switchTab('daily-check');
+    }
+
+    function openTaskModal() { document.getElementById('m-task-due').value = getLocalISODate(); document.getElementById('task-modal').classList.remove('hidden'); }
+    function openIncidentModal() { document.getElementById('inc-modal').classList.remove('hidden'); }
+    function closeModals() { document.getElementById('task-modal').classList.add('hidden'); document.getElementById('inc-modal').classList.add('hidden'); }
+
+    async function submitNewTask(e) {
+      e.preventDefault();
+      const due = new Date(document.getElementById('m-task-due').value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      db.tasks.unshift({ no: `TASK-00${db.tasks.length + 1}`, name: document.getElementById('m-task-name').value, assigned: document.getElementById('m-task-user').value, priority: document.getElementById('m-task-priority').value, status: 'Open', due });
+      document.getElementById('m-task-name').value = ''; closeModals(); renderAll(); await pushToGitHub();
+    }
+
+    async function submitNewIncident(e) {
+      e.preventDefault();
+      db.incidents.unshift({
+        no: `INC-00${db.incidents.length + 1}`,
+        date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        category: document.getElementById('m-inc-cat').value, issue: document.getElementById('m-inc-issue').value,
+        by: currentUser ? currentUser.name : 'IT Support', status: 'Open'
+      });
+      document.getElementById('m-inc-issue').value = ''; closeModals(); renderAll(); await pushToGitHub();
+    }
+
+    function exportCSV() {
+      const rows = [['Date', 'Type', 'Status', 'Remark', 'Checked By'], ...db.dailyChecks.map(c => [c.date, c.type, c.status, `"${c.remark}"`, c.by])];
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([rows.map(r => r.join(',')).join('\n')], { type: 'text/csv' }));
+      a.download = 'it-operations-report.csv'; a.click();
+    }
+
+    // --- GITHUB AUTO-SYNC FOR ALL USERS ---
+    function saveGitHubConfig() {
+      const cfg = {
+        owner: document.getElementById('gh-owner').value.trim() || 'DaeVid78',
+        repo: document.getElementById('gh-repo').value.trim() || 'it-operations-portal',
+        token: document.getElementById('gh-token').value.trim()
+      };
+      localStorage.setItem('gh_config', JSON.stringify(cfg));
+      pushToGitHub();
+      alert('GitHub Sync Connected!');
+    }
+
+    function copyTeamSyncLink() {
+      const token = document.getElementById('gh-token').value.trim();
+      if (!token) return alert('GitHub Token အရင်ထည့်ပေးပါ!');
+      saveGitHubConfig();
+      const baseUrl = window.location.origin + window.location.pathname;
+      const inviteUrl = `${baseUrl}?sync=${btoa(token)}`;
+      navigator.clipboard.writeText(inviteUrl);
+      alert('Team Auto-Sync Link ကို Copy ကူးပြီးပါပြီ! ဤ Link ကို ဝန်ထမ်းများသို့ ပို့ပေးလိုက်ပါ။');
+    }
+
+    async function pullFromGitHub() {
+      const cfg = JSON.parse(localStorage.getItem('gh_config') || '{}');
+      const owner = cfg.owner || 'DaeVid78';
+      const repo = cfg.repo || 'it-operations-portal';
+      try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/db.json?t=${Date.now()}`, {
+          headers: cfg.token ? { Authorization: `Bearer ${cfg.token}` } : {}
+        });
+        if (res.ok) {
+          const file = await res.json();
+          const remoteDB = JSON.parse(decodeURIComponent(escape(atob(file.content))));
+          if (remoteDB && remoteDB.users) {
+            db = remoteDB;
+            renderAll();
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function pushToGitHub() {
+      const cfg = JSON.parse(localStorage.getItem('gh_config') || '{}');
+      const owner = cfg.owner || 'DaeVid78';
+      const repo = cfg.repo || 'it-operations-portal';
+      if (!cfg.token) return;
+      const badge = document.getElementById('sync-badge');
+      if (badge) badge.innerText = 'Syncing...';
+      try {
+        const url = `https://api.github.com/repos/${owner}/${repo}/contents/db.json`;
+        let sha = undefined;
+        const getRes = await fetch(url, { headers: { Authorization: `Bearer ${cfg.token}` } });
+        if (getRes.ok) sha = (await getRes.json()).sha;
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(db, null, 2))));
+        await fetch(url, {
+          method: 'PUT',
+          headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'Update IT Portal DB', content, sha })
+        });
+        if (badge) badge.innerHTML = '<span class="dot"></span> Synced with GitHub';
+      } catch (e) {
+        if (badge) badge.innerText = 'Local Saved';
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateRealTimeDate();
+      // Auto-capture token from shared invite link (?sync=...)
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('sync')) {
+        try {
+          const t = atob(params.get('sync'));
+          localStorage.setItem('gh_config', JSON.stringify({ owner: 'DaeVid78', repo: 'it-operations-portal', token: t }));
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (e) {}
+      }
+
+      const cfg = JSON.parse(localStorage.getItem('gh_config') || '{}');
+      document.getElementById('gh-owner').value = cfg.owner || 'DaeVid78';
+      document.getElementById('gh-repo').value = cfg.repo || 'it-operations-portal';
+      if (cfg.token) document.getElementById('gh-token').value = cfg.token;
+
+      applyLoggedInUser();
+      pullFromGitHub();
+      setInterval(pullFromGitHub, 15000); // Auto-sync every 15 seconds for all users
+
+      if (window.Chart) {
+        new Chart(document.getElementById('monthlyChart'), {
+          type: 'line',
+          data: {
+            labels: ['1 Oct', '7 Oct', '14 Oct', '21 Oct', '31 Oct'],
+            datasets: [
+              { label: 'CCTV', data: [12, 18, 15, 22, 30], borderColor: '#10b981', tension: 0.3 },
+              { label: 'Network', data: [8, 14, 11, 16, 20], borderColor: '#2563eb', tension: 0.3 },
+              { label: 'Tasks', data: [3, 5, 6, 8, 13], borderColor: '#f59e0b', tension: 0.3 },
+              { label: 'Incidents', data: [1, 2, 1, 3, 4], borderColor: '#e11d48', tension: 0.3 }
+            ]
+          }
+        });
+        new Chart(document.getElementById('kpiChart'), {
+          type: 'bar',
+          data: {
+            labels: ['Yair Myat Aung', 'Dae Vid', 'Thae Ei Mon', 'Thurein Htun', 'Htet Aung Khant'],
+            datasets: [
+              { label: 'CCTV', data: [25, 24, 22, 21, 18], backgroundColor: '#10b981' },
+              { label: 'Network', data: [25, 26, 20, 22, 19], backgroundColor: '#2563eb' },
+              { label: 'Tasks', data: [18, 19, 17, 16, 20], backgroundColor: '#f59e0b' },
+              { label: 'Incidents', data: [5, 6, 7, 5, 8], backgroundColor: '#e11d48' }
+            ]
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
