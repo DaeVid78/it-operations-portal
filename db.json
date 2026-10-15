@@ -25,6 +25,12 @@
       "name": "Thurein Htun",
       "role": "IT Support Specialist"
     }
+    {
+      "username": "htet",
+      "password": "123",
+      "name": "Htet Aung Khant",
+      "role": "IT Manager"
+    }
   ],
   "cctvCount": 25,
   "networkCount": 30,
