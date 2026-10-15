@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v3_team_2026",
+  "schemaVersion": "v6_team_sync_2026",
   "users": [
     {
       "username": "yair",
@@ -9,7 +9,7 @@
     },
     {
       "username": "daevid",
-      "password": "David",
+      "password": "123",
       "name": "Dae Vid",
       "role": "IT Support"
     },
@@ -24,7 +24,7 @@
       "password": "123",
       "name": "Thurein Htun",
       "role": "IT Support Specialist"
-    }
+    },
     {
       "username": "htet",
       "password": "123",
@@ -32,43 +32,43 @@
       "role": "IT Manager"
     }
   ],
-  "cctvCount": 25,
+  "cctvCount": 26,
   "networkCount": 30,
   "dailyChecks": [
     {
-      "date": "14 Oct 2026",
+      "date": "15 Oct 2026",
+      "type": "CCTV",
+      "status": "Issue Found",
+      "remark": "101 Camera(s) Offline",
+      "by": "Htet Aung Khant"
+    },
+    {
+      "date": "15 Oct 2026",
       "type": "CCTV",
       "status": "Completed",
       "remark": "All cameras working normally",
       "by": "Yair Myat Aung"
     },
     {
-      "date": "14 Oct 2026",
+      "date": "15 Oct 2026",
       "type": "Network",
       "status": "Completed",
       "remark": "Speed: 250 Mbps",
       "by": "Dae Vid"
     },
     {
-      "date": "13 Oct 2026",
+      "date": "14 Oct 2026",
       "type": "CCTV",
       "status": "Issue Found",
       "remark": "Camera 14 Offline",
       "by": "Thae Ei Mon"
     },
     {
-      "date": "13 Oct 2026",
+      "date": "14 Oct 2026",
       "type": "Network",
       "status": "Completed",
       "remark": "Speed: 220 Mbps",
       "by": "Thurein Htun"
-    },
-    {
-      "date": "12 Oct 2026",
-      "type": "CCTV",
-      "status": "Completed",
-      "remark": "All cameras working",
-      "by": "Yair Myat Aung"
     }
   ],
   "tasks": [
@@ -78,7 +78,7 @@
       "assigned": "Yair Myat Aung",
       "priority": "High",
       "status": "In Progress",
-      "due": "15 Oct 2026"
+      "due": "16 Oct 2026"
     },
     {
       "no": "TASK-002",
@@ -86,7 +86,7 @@
       "assigned": "Dae Vid",
       "priority": "Medium",
       "status": "Open",
-      "due": "16 Oct 2026"
+      "due": "17 Oct 2026"
     },
     {
       "no": "TASK-003",
@@ -94,7 +94,7 @@
       "assigned": "Thurein Htun",
       "priority": "High",
       "status": "Completed",
-      "due": "14 Oct 2026"
+      "due": "15 Oct 2026"
     },
     {
       "no": "TASK-004",
@@ -102,21 +102,21 @@
       "assigned": "Thae Ei Mon",
       "priority": "Medium",
       "status": "In Progress",
-      "due": "15 Oct 2026"
-    },
-    {
-      "no": "TASK-005",
-      "name": "Review Monthly Audit",
-      "assigned": "Htet Aung Khant",
-      "priority": "Low",
-      "status": "Open",
-      "due": "18 Oct 2026"
+      "due": "16 Oct 2026"
     }
   ],
   "incidents": [
     {
+      "no": "INC-003",
+      "date": "15 Oct 2026",
+      "category": "CCTV",
+      "issue": "101 Camera(s) Offline",
+      "by": "Htet Aung Khant",
+      "status": "Open"
+    },
+    {
       "no": "INC-001",
-      "date": "14 Oct 2026",
+      "date": "15 Oct 2026",
       "category": "CCTV",
       "issue": "Camera 14 Offline",
       "by": "Thae Ei Mon",
@@ -124,35 +124,11 @@
     },
     {
       "no": "INC-002",
-      "date": "12 Oct 2026",
+      "date": "14 Oct 2026",
       "category": "Network",
       "issue": "Internet Down",
       "by": "Dae Vid",
       "status": "Resolved"
-    },
-    {
-      "no": "INC-003",
-      "date": "10 Oct 2026",
-      "category": "Printer",
-      "issue": "Printer Not Working",
-      "by": "Yair Myat Aung",
-      "status": "Closed"
-    },
-    {
-      "no": "INC-004",
-      "date": "09 Oct 2026",
-      "category": "PC",
-      "issue": "PC Not Boot",
-      "by": "Thurein Htun",
-      "status": "Resolved"
-    },
-    {
-      "no": "INC-005",
-      "date": "06 Oct 2026",
-      "category": "CCTV",
-      "issue": "No Recording",
-      "by": "Yair Myat Aung",
-      "status": "Closed"
     }
   ]
 }
