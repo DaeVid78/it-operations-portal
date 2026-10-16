@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "v6_team_sync_2026",
+  "schemaVersion": "v10_native_exe_apk_2026",
   "users": [
     {
       "username": "yair",
@@ -32,110 +32,9 @@
       "role": "IT Manager"
     }
   ],
-  "cctvCount": 27,
-  "networkCount": 30,
-  "dailyChecks": [
-    {
-      "date": "15 Oct 2026",
-      "type": "CCTV",
-      "status": "Completed",
-      "remark": "All cameras working normally",
-      "by": "Htet Aung Khant"
-    },
-    {
-      "date": "15 Oct 2026",
-      "type": "CCTV",
-      "status": "Issue Found",
-      "remark": "101 Camera(s) Offline",
-      "by": "Htet Aung Khant"
-    },
-    {
-      "date": "15 Oct 2026",
-      "type": "CCTV",
-      "status": "Completed",
-      "remark": "All cameras working normally",
-      "by": "Yair Myat Aung"
-    },
-    {
-      "date": "15 Oct 2026",
-      "type": "Network",
-      "status": "Completed",
-      "remark": "Speed: 250 Mbps",
-      "by": "Dae Vid"
-    },
-    {
-      "date": "14 Oct 2026",
-      "type": "CCTV",
-      "status": "Issue Found",
-      "remark": "Camera 14 Offline",
-      "by": "Thae Ei Mon"
-    },
-    {
-      "date": "14 Oct 2026",
-      "type": "Network",
-      "status": "Completed",
-      "remark": "Speed: 220 Mbps",
-      "by": "Thurein Htun"
-    }
-  ],
-  "tasks": [
-    {
-      "no": "TASK-001",
-      "name": "Replace Switch",
-      "assigned": "Yair Myat Aung",
-      "priority": "High",
-      "status": "In Progress",
-      "due": "16 Oct 2026"
-    },
-    {
-      "no": "TASK-002",
-      "name": "Install Printer",
-      "assigned": "Dae Vid",
-      "priority": "Medium",
-      "status": "Open",
-      "due": "17 Oct 2026"
-    },
-    {
-      "no": "TASK-003",
-      "name": "Configure Firewall",
-      "assigned": "Thurein Htun",
-      "priority": "High",
-      "status": "Completed",
-      "due": "15 Oct 2026"
-    },
-    {
-      "no": "TASK-004",
-      "name": "Check Backup",
-      "assigned": "Thae Ei Mon",
-      "priority": "Medium",
-      "status": "In Progress",
-      "due": "16 Oct 2026"
-    }
-  ],
-  "incidents": [
-    {
-      "no": "INC-003",
-      "date": "15 Oct 2026",
-      "category": "CCTV",
-      "issue": "101 Camera(s) Offline",
-      "by": "Htet Aung Khant",
-      "status": "Open"
-    },
-    {
-      "no": "INC-001",
-      "date": "15 Oct 2026",
-      "category": "CCTV",
-      "issue": "Camera 14 Offline",
-      "by": "Thae Ei Mon",
-      "status": "Open"
-    },
-    {
-      "no": "INC-002",
-      "date": "14 Oct 2026",
-      "category": "Network",
-      "issue": "Internet Down",
-      "by": "Dae Vid",
-      "status": "Resolved"
-    }
-  ]
+  "cctvCount": 0,
+  "networkCount": 0,
+  "dailyChecks": [],
+  "tasks": [],
+  "incidents": []
 }
