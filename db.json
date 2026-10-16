@@ -1,977 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Operations Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #f3f6f9; color: #1e293b; display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
-    .hidden { display: none !important; }
-
-    /* LOGIN */
-    .login-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f172a, #1e293b, #1d4ed8); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
-    .login-card { background: #fff; width: 100%; max-width: 400px; border-radius: 16px; padding: 32px 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45); }
-    .login-logo { width: 52px; height: 52px; border-radius: 14px; background: #eff6ff; border: 1px solid #bfdbfe; color: #2563eb; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-    .login-error { background: #ffe4e6; color: #be123c; font-size: 12px; font-weight: 600; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; }
-
-    /* SIDEBAR */
-    .sidebar { width: 245px; background: linear-gradient(180deg, #111c30 0%, #1a2942 100%); color: #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; user-select: none; z-index: 40; transition: transform 0.25s ease; }
-    .brand { padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .brand-left { display: flex; align-items: center; gap: 12px; }
-    .brand-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(59,130,246,0.2); border: 1px solid rgba(96,165,250,0.4); display: flex; align-items: center; justify-content: center; color: #60a5fa; }
-    .brand-title { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.25; }
-    .nav-menu { padding: 12px; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; }
-    .nav-btn { width: 100%; background: transparent; border: none; color: #cbd5e1; padding: 10px 14px; border-radius: 8px; font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left; font-family: inherit; }
-    .nav-btn i { width: 18px; text-align: center; }
-    .nav-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .nav-btn.active { background: #1d6bf3; color: #fff; box-shadow: 0 4px 12px rgba(29,107,243,0.35); }
-    .user-footer { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(15,23,42,0.65); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .avatar { width: 36px; height: 36px; border-radius: 50%; background: #6366f1; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .mini-avatar { width: 22px; height: 22px; border-radius: 50%; background: #4f46e5; color: #fff; font-weight: 700; font-size: 10px; display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; }
-    .user-name { color: #fff; font-size: 13px; font-weight: 600; }
-    .user-role { color: #94a3b8; font-size: 11px; }
-    .logout-btn { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #fca5a5; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .logout-btn:hover { background: #ef4444; color: #fff; }
-
-    /* TOP HEADER LOGOUT BUTTON (ALWAYS VISIBLE ON PHONE & LAPTOP) */
-    .header-logout-btn { background: #fff1f2; border: 1px solid #fecdd3; color: #e11d48; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; transition: all 0.15s; }
-    .header-logout-btn:hover { background: #ffe4e6; }
-    .mobile-menu-btn { display: none; background: #f1f5f9; border: 1px solid #cbd5e1; color: #1e293b; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; align-items: center; justify-content: center; font-size: 16px; }
-
-    /* MAIN */
-    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%; }
-    .top-header { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; flex-shrink: 0; }
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .page-title { font-size: 20px; font-weight: 700; }
-    .page-subtitle { font-size: 11.5px; color: #64748b; }
-    .header-right { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .role-indicator { font-size: 11px; padding: 5px 9px; border-radius: 999px; font-weight: 700; display: flex; align-items: center; gap: 5px; }
-    .role-manager { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
-    .role-staff { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .sync-badge { font-size: 11px; padding: 5px 9px; border-radius: 999px; background: #d1fae5; color: #047857; font-weight: 600; display: flex; align-items: center; gap: 5px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block; }
-    .date-box { font-size: 11.5px; color: #475569; background: #f1f5f9; padding: 6px 9px; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 6px; font-weight: 500; }
-    .bell-btn { background: none; border: none; color: #64748b; font-size: 17px; cursor: pointer; position: relative; padding: 4px; }
-    .bell-badge { position: absolute; top: -2px; right: -4px; background: #ef4444; color: #fff; font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 999px; }
-
-    /* CONTENT & CARDS */
-    .content-area { flex: 1; overflow-y: auto; padding: 18px 20px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-    .stat-card { border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; transition: transform 0.15s; }
-    .stat-card:hover { transform: translateY(-2px); }
-    .stat-title { font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
-    .stat-body { display: flex; align-items: center; justify-content: center; gap: 14px; }
-    .stat-icon { font-size: 26px; }
-    .stat-num { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
-    .stat-sub { font-size: 11px; color: #64748b; }
-    .card-green { background: #ecfdf5; border: 1px solid #a7f3d0; }
-    .card-blue  { background: #eff6ff; border: 1px solid #bfdbfe; }
-    .card-amber { background: #fffbeb; border: 1px solid #fde68a; }
-    .card-rose  { background: #fff1f2; border: 1px solid #fecdd3; }
-
-    .panel { background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,0.03); overflow-x: auto; }
-    .dash-lower-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 18px; }
-    .panel-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
-    .panel-title { font-size: 15px; font-weight: 700; }
-    .link-btn { background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 600; cursor: pointer; }
-
-    table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
-    th { background: #f1f5f9; color: #475569; font-weight: 600; padding: 9px 10px; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
-    td { padding: 10px; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; }
-    tr:hover td { background: #f8fafc; }
-    .empty-row { text-align: center; color: #94a3b8; padding: 24px !important; font-style: italic; }
-    .action-btn { background: none; border: 1px solid #e2e8f0; border-radius: 6px; padding: 3px 7px; cursor: pointer; font-size: 11px; margin-right: 3px; }
-    .action-edit { color: #2563eb; background: #eff6ff; border-color: #bfdbfe; }
-    .action-del { color: #e11d48; background: #fff1f2; border-color: #fecdd3; }
-    .view-only-tag { font-size: 11px; color: #94a3b8; font-weight: 500; }
-
-    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
-    .b-green { background: #d1fae5; color: #047857; }
-    .b-amber { background: #fef3c7; color: #b45309; }
-    .b-blue  { background: #dbeafe; color: #1d4ed8; }
-    .b-rose  { background: #ffe4e6; color: #be123c; }
-    .b-teal  { background: #ccfbf1; color: #0f766e; }
-
-    .check-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
-    .check-card { border-radius: 14px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
-    .check-card-top { display: flex; align-items: flex-start; gap: 14px; }
-    .check-icon-box { width: 48px; height: 48px; border-radius: 12px; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .circle-arrow { width: 32px; height: 32px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; margin: 12px auto 0; }
-
-    /* NATIVE APK + EXE LAUNCHER BAR */
-    .apk-launcher-bar { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-    .apk-btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .apk-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #fff; border: none; cursor: pointer; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .apk-seetong { background: #0284c7; }
-    .apk-imou    { background: #ea580c; }
-    .apk-hik     { background: #dc2626; }
-    .apk-pc      { background: #334155; }
-
-    .form-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 20px; }
-    .form-row { display: grid; grid-template-columns: 150px 1fr; align-items: center; margin-bottom: 12px; font-size: 13px; gap: 8px; }
-    .form-row label { color: #475569; font-weight: 500; }
-    .form-control { width: 100%; padding: 8px 11px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; font-family: inherit; background: #fff; }
-    .form-control[readonly] { background: #f1f5f9; color: #0f172a; font-weight: 600; }
-    .upload-box { border: 2px dashed #93c5fd; border-radius: 12px; padding: 16px; text-align: center; cursor: pointer; background: #f8fafc; display: block; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-    .gallery-item { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; height: 90px; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-    .gallery-remove { position: absolute; top: 4px; right: 4px; width: 20px; height: 20px; border-radius: 50%; background: rgba(15,23,42,0.75); color: #fff; border: none; cursor: pointer; font-size: 10px; }
-
-    .btn { padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-success { background: #059669; color: #fff; }
-    .btn-danger { background: #e11d48; color: #fff; }
-    .btn-outline { background: #fff; border-color: #cbd5e1; color: #334155; }
-    .toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-    .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
-    .filter-btn { padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: none; background: #f1f5f9; color: #475569; cursor: pointer; }
-    .filter-btn.active { background: #2563eb; color: #fff; }
-
-    .thumb-strip { display: flex; align-items: center; gap: 4px; cursor: pointer; }
-    .thumb-mini { width: 28px; height: 28px; border-radius: 4px; object-fit: cover; border: 1px solid #cbd5e1; }
-
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,0.6); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
-    .modal-card { background: #fff; border-radius: 14px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; padding: 20px; }
-
-    /* MOBILE RESPONSIVE FIXES FOR PHONE */
-    @media (max-width: 900px) {
-      .sidebar { position: fixed; top: 0; bottom: 0; left: 0; transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-      .mobile-menu-btn { display: inline-flex; }
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .dash-lower-grid, .check-cards-grid, .form-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      .date-box { display: none; }
+{
+  "schemaVersion": "v6_team_sync_2026",
+  "users": [
+    {
+      "username": "yair",
+      "password": "123",
+      "name": "Yair Myat Aung",
+      "role": "IT Support"
+    },
+    {
+      "username": "daevid",
+      "password": "123",
+      "name": "Dae Vid",
+      "role": "IT Support"
+    },
+    {
+      "username": "thaeei",
+      "password": "123",
+      "name": "Thae Ei Mon",
+      "role": "IT Support Specialist"
+    },
+    {
+      "username": "thurein",
+      "password": "123",
+      "name": "Thurein Htun",
+      "role": "IT Support Specialist"
+    },
+    {
+      "username": "htet",
+      "password": "123",
+      "name": "Htet Aung Khant",
+      "role": "IT Manager"
     }
-  </style>
-</head>
-<body>
-
-  <!-- LOGIN OVERLAY -->
-  <div id="login-screen" class="login-overlay">
-    <div class="login-card">
-      <div class="login-logo"><i class="fa-solid fa-shield-halved"></i></div>
-      <h2 style="text-align:center;font-size:21px;font-weight:800;">IT Operations Portal</h2>
-      <p style="text-align:center;font-size:12.5px;color:#64748b;margin:4px 0 22px;">Sign in with your IT team account</p>
-      <div id="login-error" class="login-error hidden">Username သို့မဟုတ် Password မှားယွင်းနေပါသည်</div>
-      <form onsubmit="handleLogin(event)">
-        <div style="margin-bottom:14px;">
-          <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Username</label>
-          <input id="login-username" type="text" required placeholder="Enter username" class="form-control">
-        </div>
-        <div style="margin-bottom:20px;">
-          <label style="display:block;font-size:12px;font-weight:600;margin-bottom:5px;">Password</label>
-          <input id="login-password" type="password" required placeholder="Enter password" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;font-size:14px;">Sign In</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- SIDEBAR -->
-  <aside id="app-sidebar" class="sidebar">
-    <div>
-      <div class="brand">
-        <div class="brand-left">
-          <div class="brand-icon"><i class="fa-solid fa-globe"></i></div>
-          <div class="brand-title">IT Operations<br>Portal</div>
-        </div>
-        <button onclick="toggleMobileSidebar()" class="mobile-menu-btn" style="background:rgba(255,255,255,0.1);border:none;color:#fff;">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <nav class="nav-menu">
-        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn active"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
-        <button onclick="switchTab('daily-check')" id="nav-daily-check" class="nav-btn"><i class="fa-solid fa-square-check"></i> Daily Check</button>
-        <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn"><i class="fa-solid fa-list-check"></i> Task Management</button>
-        <button onclick="switchTab('incidents')" id="nav-incidents" class="nav-btn"><i class="fa-solid fa-file-shield"></i> Incident Log</button>
-        <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn"><i class="fa-solid fa-chart-pie"></i> Reports</button>
-        <button onclick="switchTab('kpi')" id="nav-kpi" class="nav-btn"><i class="fa-solid fa-chart-line"></i> KPI</button>
-        <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn"><i class="fa-solid fa-users-gear"></i> Accounts & Settings</button>
-        <button onclick="handleLogout()" class="nav-btn" style="color:#fda4af;margin-top:8px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout / Sign Out
-        </button>
-      </nav>
-    </div>
-    <div class="user-footer">
-      <div id="active-user-avatar" class="avatar">HK</div>
-      <div style="flex:1;overflow:hidden;">
-        <div id="active-user-name" class="user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Htet Aung Khant</div>
-        <div id="active-user-role" class="user-role">IT Manager</div>
-      </div>
-      <button onclick="handleLogout()" class="logout-btn" title="Sign Out"><i class="fa-solid fa-power-off"></i></button>
-    </div>
-  </aside>
-
-  <!-- MAIN AREA -->
-  <div class="main-wrapper">
-    <header class="top-header">
-      <div class="header-left">
-        <button onclick="toggleMobileSidebar()" class="mobile-menu-btn" title="Menu">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-        <div>
-          <h2 id="page-title" class="page-title">Dashboard</h2>
-          <p id="page-subtitle" class="page-subtitle">Overview of IT Operations</p>
-        </div>
-      </div>
-      <div class="header-right">
-        <span id="role-permission-badge" class="role-indicator role-staff">Staff Mode</span>
-        <span id="sync-badge" class="sync-badge"><span class="dot"></span> Live Sync</span>
-        <div class="date-box">
-          <i class="fa-regular fa-calendar" style="color:#2563eb;"></i>
-          <span id="current-date-display">Loading...</span>
-        </div>
-        <button onclick="switchTab('incidents')" class="bell-btn">
-          <i class="fa-regular fa-bell"></i>
-          <span id="bell-count" class="bell-badge">0</span>
-        </button>
-        <!-- TOP LOGOUT BUTTON FOR PHONE & LAPTOP -->
-        <button onclick="handleLogout()" class="header-logout-btn" title="Sign Out">
-          <i class="fa-solid fa-power-off"></i> Logout
-        </button>
-      </div>
-    </header>
-
-    <main class="content-area">
-      <!-- 1. DASHBOARD -->
-      <section id="view-dashboard">
-        <div class="stats-grid">
-          <div onclick="switchTab('daily-check')" class="stat-card card-green">
-            <div class="stat-title">Total CCTV Checks</div>
-            <div class="stat-body"><i class="fa-solid fa-video stat-icon" style="color:#059669;"></i><div><div id="dash-cctv-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
-          </div>
-          <div onclick="switchTab('daily-check')" class="stat-card card-blue">
-            <div class="stat-title">Total Network Checks</div>
-            <div class="stat-body"><i class="fa-solid fa-globe stat-icon" style="color:#2563eb;"></i><div><div id="dash-net-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
-          </div>
-          <div onclick="switchTab('tasks')" class="stat-card card-amber">
-            <div class="stat-title">Open Tasks</div>
-            <div class="stat-body"><i class="fa-solid fa-clipboard-list stat-icon" style="color:#d97706;"></i><div><div id="dash-task-count" class="stat-num">0</div><div class="stat-sub">In Progress</div></div></div>
-          </div>
-          <div onclick="switchTab('incidents')" class="stat-card card-rose">
-            <div class="stat-title">Open Incidents</div>
-            <div class="stat-body"><i class="fa-solid fa-triangle-exclamation stat-icon" style="color:#e11d48;"></i><div><div id="dash-inc-count" class="stat-num">0</div><div class="stat-sub">This Month</div></div></div>
-          </div>
-        </div>
-        <div class="dash-lower-grid">
-          <div class="panel"><div class="panel-header"><h3 class="panel-title">Activities Overview</h3></div><canvas id="monthlyChart" height="200"></canvas></div>
-          <div class="panel">
-            <div class="panel-header">
-              <h3 class="panel-title">Recent Activities</h3>
-              <div style="display:flex;gap:6px;">
-                <button onclick="exportChecksReport('ALL', true)" class="btn btn-outline"><i class="fa-solid fa-file-image"></i> Export with Photos</button>
-                <button onclick="switchTab('daily-check')" class="link-btn">View All</button>
-              </div>
-            </div>
-            <table><thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Photos</th><th>By</th></tr></thead><tbody id="dash-recent-tbody"></tbody></table>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. DAILY CHECK -->
-      <section id="view-daily-check" class="hidden">
-        <div class="check-cards-grid">
-          <div onclick="switchTab('cctv-form')" class="check-card card-green">
-            <div class="check-card-top"><div class="check-icon-box" style="background:#059669;"><i class="fa-solid fa-video"></i></div><div><h3 style="font-size:17px;font-weight:700;">CCTV Check</h3><p style="font-size:12.5px;color:#475569;margin-top:4px;">Record daily CCTV monitoring status, total cameras, issues and screenshots.</p></div></div>
-            <div class="circle-arrow" style="background:#059669;"><i class="fa-solid fa-arrow-right"></i></div>
-          </div>
-          <div onclick="switchTab('network-form')" class="check-card card-blue">
-            <div class="check-card-top"><div class="check-icon-box" style="background:#2563eb;"><i class="fa-solid fa-globe"></i></div><div><h3 style="font-size:17px;font-weight:700;">Network Check</h3><p style="font-size:12.5px;color:#475569;margin-top:4px;">Record daily network speed test, ping check and network status.</p></div></div>
-            <div class="circle-arrow" style="background:#2563eb;"><i class="fa-solid fa-arrow-right"></i></div>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">
-            <div>
-              <h3 class="panel-title">Recent Daily Checks</h3>
-              <span style="font-size:11.5px;color:#64748b;">ပုံများကို နှိပ်၍ အကြီးချဲ့ကြည့်နိုင်ပြီး၊ ပုံပါဝင်သော Report သို့မဟုတ် CSV ထုတ်ယူနိုင်သည်</span>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button onclick="exportChecksReport('CCTV', false)" class="btn btn-success"><i class="fa-solid fa-video"></i> Export CCTV + Photos</button>
-              <button onclick="exportChecksReport('Network', false)" class="btn btn-primary"><i class="fa-solid fa-globe"></i> Export Network + Photos</button>
-              <button onclick="exportChecksCSV('ALL')" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-            </div>
-          </div>
-          <table><thead><tr><th>Ticket / Date</th><th>Type</th><th>Details</th><th>Status</th><th>Remark</th><th>Photos</th><th>By</th><th>Action</th></tr></thead><tbody id="daily-checks-tbody"></tbody></table>
-        </div>
-      </section>
-
-      <!-- 3. CCTV CHECK FORM -->
-      <section id="view-cctv-form" class="hidden">
-        <div class="apk-launcher-bar">
-          <div>
-            <div style="font-size:13.5px;font-weight:700;">
-              <i class="fa-solid fa-laptop-mobile" style="color:#059669;margin-right:6px;"></i>Open CCTV Software (ဖုန်း APK / Laptop .EXE တိုက်ရိုက်ဖွင့်ရန်)
-            </div>
-            <div style="font-size:11.5px;color:#64748b;margin-top:2px;">
-              ဖုန်းဖြင့်နှိပ်လျှင် APK ပွင့်ပြီး၊ Laptop ဖြင့်နှိပ်လျှင် `.exe` ပွင့်ပါမည်
-            </div>
-          </div>
-          <div class="apk-btn-group">
-            <button type="button" onclick="launchNativeApp('seetong')" class="apk-btn apk-seetong"><i class="fa-solid fa-video"></i> Open Seetong</button>
-            <button type="button" onclick="launchNativeApp('imou')" class="apk-btn apk-imou"><i class="fa-solid fa-camera"></i> Open IMOU</button>
-            <button type="button" onclick="launchNativeApp('hikconnect')" class="apk-btn apk-hik"><i class="fa-solid fa-shield-halved"></i> Open Hik-Connect</button>
-            <button type="button" onclick="copyLaptopCmdSetup()" class="apk-btn apk-pc"><i class="fa-solid fa-terminal"></i> Copy Laptop CMD Setup</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <h3 class="panel-title">CCTV Check Form</h3>
-            <div style="display:flex;gap:6px;">
-              <button type="button" onclick="exportChecksReport('CCTV', false)" class="btn btn-success"><i class="fa-solid fa-file-arrow-down"></i> Export CCTV Report (with Photos)</button>
-              <button type="button" onclick="exportChecksCSV('CCTV')" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> CCTV CSV</button>
-            </div>
-          </div>
-          <form onsubmit="saveCCTVCheck(event)" class="form-grid">
-            <div>
-              <div class="form-row"><label>Ticket Number</label><input id="cctv-ticket" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Check Date</label><input id="cctv-date" type="date" required class="form-control"></div>
-              <div class="form-row"><label>Checked By</label><input id="cctv-by" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Total Cameras</label><input id="cctv-total" type="number" value="0" min="0" oninput="calcOfflineCameras()" required class="form-control"></div>
-              <div class="form-row"><label>Working Cameras</label><input id="cctv-working" type="number" value="0" min="0" oninput="calcOfflineCameras()" required class="form-control"></div>
-              <div class="form-row"><label>Offline Cameras</label><input id="cctv-offline" type="number" value="0" readonly class="form-control"></div>
-              <div class="form-row"><label>Overall Status</label><select id="cctv-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Completed</option><option value="Issue Found">Issue Found</option></select></div>
-              <div class="form-row"><label>Remarks</label><textarea id="cctv-remarks" rows="3" class="form-control" placeholder="Enter CCTV check remarks..."></textarea></div>
-            </div>
-            <div style="display:flex;flex-direction:column;justify-content:space-between;">
-              <div>
-                <div style="font-size:13.5px;font-weight:600;margin-bottom:8px;">Screenshot / Evidence (Saved with Record)</div>
-                <label class="upload-box">
-                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:26px;color:#3b82f6;margin-bottom:4px;"></i>
-                  <div style="font-size:12px;color:#475569;">Click to upload CCTV screenshots</div>
-                  <input type="file" accept="image/*" multiple class="hidden" onchange="handleGalleryUpload(event, 'cctv')">
-                </label>
-                <div id="cctv-gallery" class="gallery-grid"></div>
-              </div>
-              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
-                <button type="button" onclick="clearCCTVForm()" class="btn btn-outline">Clear</button>
-                <button type="submit" class="btn btn-primary"><i class="fa-regular fa-floppy-disk"></i> Save CCTV Check</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <!-- 4. NETWORK CHECK FORM -->
-      <section id="view-network-form" class="hidden">
-        <div class="panel">
-          <div class="panel-header">
-            <h3 class="panel-title">Network Check Form</h3>
-            <div style="display:flex;gap:6px;">
-              <button type="button" onclick="exportChecksReport('Network', false)" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i> Export Network Report (with Photos)</button>
-              <button type="button" onclick="exportChecksCSV('Network')" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Network CSV</button>
-            </div>
-          </div>
-          <form onsubmit="saveNetworkCheck(event)" class="form-grid">
-            <div>
-              <div class="form-row"><label>Ticket Number</label><input id="net-ticket" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Check Date</label><input id="net-date" type="date" required class="form-control"></div>
-              <div class="form-row"><label>Checked By</label><input id="net-by" type="text" readonly class="form-control"></div>
-              <div class="form-row"><label>Download (Mbps)</label><input id="net-dl" type="number" step="0.01" value="" placeholder="0.00" oninput="updateSpeedPreview()" required class="form-control"></div>
-              <div class="form-row"><label>Upload (Mbps)</label><input id="net-ul" type="number" step="0.01" value="" placeholder="0.00" oninput="updateSpeedPreview()" required class="form-control"></div>
-              <div class="form-row"><label>Ping (ms)</label><input id="net-ping" type="number" value="" placeholder="0" oninput="updateSpeedPreview()" required class="form-control"></div>
-              <div class="form-row"><label>Status</label><select id="net-status" class="form-control" style="background:#ecfdf5;color:#047857;font-weight:600;"><option value="Completed">Good</option><option value="Issue Found">Slow / Issue</option></select></div>
-              <div class="form-row"><label>Remarks</label><textarea id="net-remarks" rows="3" class="form-control" placeholder="Enter network status remarks..."></textarea></div>
-            </div>
-            <div style="display:flex;flex-direction:column;justify-content:space-between;">
-              <div>
-                <div style="font-size:13.5px;font-weight:600;margin-bottom:8px;">Screenshot / Evidence (Saved with Record)</div>
-                <div style="background:#0f172a;color:#fff;border-radius:12px;padding:14px;text-align:center;margin-bottom:12px;">
-                  <div style="font-size:10.5px;color:#94a3b8;">SPEEDTEST LIVE PREVIEW</div>
-                  <div style="display:flex;justify-content:space-around;margin:10px 0;">
-                    <div><div style="font-size:10px;color:#34d399;">DOWNLOAD Mbps</div><div id="preview-dl" style="font-size:22px;font-weight:800;">0</div></div>
-                    <div><div style="font-size:10px;color:#818cf8;">UPLOAD Mbps</div><div id="preview-ul" style="font-size:22px;font-weight:800;">0</div></div>
-                  </div>
-                  <div style="font-size:10.5px;color:#94a3b8;">Ping <span id="preview-ping">0</span> ms</div>
-                </div>
-                <label class="upload-box">
-                  <i class="fa-solid fa-cloud-arrow-up" style="font-size:22px;color:#3b82f6;"></i>
-                  <div style="font-size:12px;color:#475569;">Upload speedtest image</div>
-                  <input type="file" accept="image/*" multiple class="hidden" onchange="handleGalleryUpload(event, 'net')">
-                </label>
-                <div id="net-gallery" class="gallery-grid"></div>
-              </div>
-              <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
-                <button type="button" onclick="clearNetworkForm()" class="btn btn-outline">Clear</button>
-                <button type="submit" class="btn btn-primary"><i class="fa-regular fa-floppy-disk"></i> Save Network Check</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <!-- 5. TASK MANAGEMENT -->
-      <section id="view-tasks" class="hidden">
-        <div class="panel">
-          <div class="toolbar">
-            <div class="filter-group">
-              <button onclick="filterTasks('All', this)" id="tbtn-all" class="filter-btn active">All (0)</button>
-              <button onclick="filterTasks('Open', this)" id="tbtn-open" class="filter-btn">Open (0)</button>
-              <button onclick="filterTasks('In Progress', this)" id="tbtn-prog" class="filter-btn">In Progress (0)</button>
-              <button onclick="filterTasks('Completed', this)" id="tbtn-comp" class="filter-btn">Completed (0)</button>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <input id="task-search" oninput="renderTasks()" type="text" placeholder="Search tasks..." class="form-control" style="width:180px;">
-              <button onclick="exportTasksCSV()" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-              <button onclick="exportTasksReport()" class="btn btn-outline"><i class="fa-solid fa-print"></i> Print / Report</button>
-              <button onclick="openTaskModal()" class="btn btn-primary">+ New Task</button>
-            </div>
-          </div>
-          <table><thead><tr><th>Task No</th><th>Task Name</th><th>Assigned To</th><th>Priority</th><th>Status</th><th>Due Date</th><th>Manager Action</th></tr></thead><tbody id="tasks-tbody"></tbody></table>
-        </div>
-      </section>
-
-      <!-- 6. INCIDENT LOG -->
-      <section id="view-incidents" class="hidden">
-        <div class="panel">
-          <div class="toolbar">
-            <div class="filter-group">
-              <button onclick="filterIncidents('All', this)" id="ibtn-all" class="filter-btn active">All (0)</button>
-              <button onclick="filterIncidents('Open', this)" id="ibtn-open" class="filter-btn">Open (0)</button>
-              <button onclick="filterIncidents('Resolved', this)" id="ibtn-res" class="filter-btn">Resolved (0)</button>
-              <button onclick="filterIncidents('Closed', this)" id="ibtn-close" class="filter-btn">Closed (0)</button>
-            </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <input id="inc-search" oninput="renderIncidents()" type="text" placeholder="Search incidents..." class="form-control" style="width:180px;">
-              <button onclick="exportIncidentsCSV()" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-              <button onclick="exportIncidentsReport()" class="btn btn-outline"><i class="fa-solid fa-print"></i> Print / Report</button>
-              <button onclick="openIncidentModal()" class="btn btn-danger">+ Log Incident</button>
-            </div>
-          </div>
-          <table><thead><tr><th>Incident No</th><th>Date</th><th>Category</th><th>Issue</th><th>Logged By</th><th>Status</th><th>Manager Action</th></tr></thead><tbody id="incidents-tbody"></tbody></table>
-        </div>
-      </section>
-
-      <!-- 7. REPORTS -->
-      <section id="view-reports" class="hidden">
-        <div class="panel">
-          <div class="toolbar">
-            <div class="filter-group">
-              <button class="filter-btn active">All Recorded Operations</button>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button onclick="exportChecksReport('CCTV', false)" class="btn btn-success"><i class="fa-solid fa-video"></i> CCTV Report + Photos</button>
-              <button onclick="exportChecksReport('Network', false)" class="btn btn-primary"><i class="fa-solid fa-globe"></i> Network Report + Photos</button>
-              <button onclick="exportFullPortalReport()" class="btn btn-outline"><i class="fa-solid fa-file-pdf"></i> Full Report (All Tabs + Photos)</button>
-              <button onclick="exportChecksCSV('ALL')" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-            </div>
-          </div>
-          <div class="stats-grid" style="margin-bottom:0;">
-            <div class="stat-card card-green"><div class="stat-title">CCTV Checks</div><div id="rep-cctv" class="stat-num">0</div></div>
-            <div class="stat-card card-blue"><div class="stat-title">Network Checks</div><div id="rep-net" class="stat-num">0</div></div>
-            <div class="stat-card card-amber"><div class="stat-title">Tasks Completed</div><div id="rep-tasks" class="stat-num">0</div></div>
-            <div class="stat-card card-rose"><div class="stat-title">Incidents</div><div id="rep-inc" class="stat-num">0</div></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 8. KPI -->
-      <section id="view-kpi" class="hidden">
-        <div class="panel" style="margin-bottom:18px;">
-          <div class="toolbar" style="margin-bottom:0;">
-            <h3 class="panel-title">Team & Individual KPI Performance</h3>
-            <div style="display:flex;gap:8px;">
-              <button onclick="exportKPICSV()" class="btn btn-outline"><i class="fa-solid fa-file-csv"></i> Export KPI CSV</button>
-              <button onclick="exportKPIReport()" class="btn btn-primary"><i class="fa-solid fa-file-arrow-down"></i> Export KPI Report</button>
-            </div>
-          </div>
-        </div>
-        <div class="dash-lower-grid">
-          <div class="panel">
-            <div class="panel-header"><h3 class="panel-title">Individual KPI</h3><select id="kpi-member-select" onchange="renderKPI()" class="form-control" style="width:180px;padding:5px 8px;"></select></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:16px;margin-top:12px;">
-              <div style="font-size:13px;line-height:2.3;">
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>CCTV Checks</span><b id="kpi-ind-cctv">0</b></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Network Checks</span><b id="kpi-ind-net">0</b></div>
-                <div style="display:flex;justify-content:space-between;border-bottom:1px solid #f1f5f9;"><span>Tasks Completed</span><b id="kpi-ind-task">0</b></div>
-                <div style="display:flex;justify-content:space-between;"><span>Incidents Logged</span><b id="kpi-ind-inc">0</b></div>
-              </div>
-              <div style="text-align:center;">
-                <div id="kpi-score-circle" style="width:105px;height:105px;border-radius:50%;border:9px solid #10b981;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:24px;font-weight:800;">0%</div>
-                <div style="font-size:12px;color:#64748b;margin-top:6px;font-weight:600;">Activity Score</div>
-              </div>
-            </div>
-          </div>
-          <div class="panel"><div class="panel-header"><h3 class="panel-title">Team Performance</h3></div><canvas id="kpiChart" height="150"></canvas></div>
-        </div>
-      </section>
-
-      <!-- 9. ACCOUNTS & SETTINGS -->
-      <section id="view-settings" class="hidden">
-        <div class="panel" style="margin-bottom:20px;">
-          <div class="panel-header">
-            <div>
-              <h3 class="panel-title">IT Team Accounts (ဝန်ထမ်းအကောင့်စာရင်း)</h3>
-              <p style="font-size:12px;color:#64748b;">IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ အကောင့်များနှင့် စာရင်းများကို ပြင်ဆင်/ဖျက်ပိုင်ခွင့် ရှိသည်</p>
-            </div>
-            <button id="manager-clear-data-btn" type="button" onclick="resetToCleanProduction()" class="btn btn-danger hidden">
-              <i class="fa-solid fa-broom"></i> Clear All Data (Start Fresh)
-            </button>
-          </div>
-          <form id="manager-add-user-form" onsubmit="addUserAccount(event)" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:14px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid #e2e8f0;">
-            <input id="new-u-name" type="text" required placeholder="Full Name" class="form-control">
-            <input id="new-u-user" type="text" required placeholder="Username" class="form-control">
-            <input id="new-u-pass" type="text" required placeholder="Password" class="form-control">
-            <select id="new-u-role" class="form-control">
-              <option value="IT Support">IT Support</option>
-              <option value="IT Support Specialist">IT Support Specialist</option>
-              <option value="IT Manager">IT Manager</option>
-            </select>
-            <button type="submit" class="btn btn-primary" style="justify-content:center;">+ Add Account</button>
-          </form>
-          <table><thead><tr><th>Full Name</th><th>Username</th><th>Password</th><th>Role</th><th>Manager Action</th></tr></thead><tbody id="users-tbody"></tbody></table>
-        </div>
-
-        <div class="dash-lower-grid">
-          <div class="panel">
-            <h3 class="panel-title" style="margin-bottom:6px;">GitHub Cloud Database & Team Invite Link</h3>
-            <p style="font-size:12px;color:#64748b;margin-bottom:14px;">Token ထည့်ပြီး <b>Copy Team Auto-Sync Link</b> ကိုနှိပ်၍ ဝန်ထမ်းများကို ပို့ပေးပါက ဝန်ထမ်းတိုင်း အလိုအလျောက် ချိတ်ဆက်ပြီး ဖြစ်သွားပါမည်။</p>
-            <div class="form-row"><label>GitHub Owner</label><input id="gh-owner" type="text" value="DaeVid78" class="form-control"></div>
-            <div class="form-row"><label>Repository Name</label><input id="gh-repo" type="text" value="it-operations-portal" class="form-control"></div>
-            <div class="form-row"><label>GitHub Token</label><input id="gh-token" type="password" placeholder="ghp_... or github_pat_..." class="form-control"></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">
-              <button onclick="saveGitHubConfig()" class="btn btn-primary">Save & Sync</button>
-              <button onclick="copyTeamSyncLink()" class="btn btn-success"><i class="fa-solid fa-share-nodes"></i> Copy Team Auto-Sync Link</button>
-              <button onclick="pullFromGitHub()" class="btn btn-outline">Reload Data</button>
-            </div>
-          </div>
-
-          <div class="panel">
-            <h3 class="panel-title" style="margin-bottom:6px;">Phone APK & Laptop .EXE File Paths</h3>
-            <p style="font-size:12px;color:#64748b;margin-bottom:12px;">Laptop ရှိ `.exe` လမ်းကြောင်းများကို စစ်ဆေးပြီး <b>Copy Laptop CMD Setup</b> ကိုနှိပ်ကာ Command Prompt (`Win+R` -> `cmd`) တွင် Paste ချ၍ Enter ခေါက်ပေးပါ—</p>
-            <div class="form-row"><label>Seetong (.exe Path)</label><input id="exe-seetong" type="text" value="C:\Program Files (x86)\Seetong\Seetong.exe" class="form-control"></div>
-            <div class="form-row"><label>IMOU (.exe Path)</label><input id="exe-imou" type="text" value="C:\Program Files (x86)\Imou\Imou.exe" class="form-control"></div>
-            <div class="form-row"><label>Hik-Connect (.exe)</label><input id="exe-hik" type="text" value="C:\Program Files (x86)\Hikvision\iVMS-4200 Site\iVMS-4200 Client\Client\iVMS-4200.Framework.C.exe" class="form-control"></div>
-            <div class="form-row"><label>Hik Android Package</label><input id="pkg-hik" type="text" value="com.connect.enduser" class="form-control"></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-              <button onclick="saveAppConfig()" class="btn btn-primary">Save Paths</button>
-              <button onclick="copyLaptopCmdSetup()" class="btn btn-outline"><i class="fa-solid fa-terminal"></i> Copy Laptop CMD Setup</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- PHOTO VIEWER MODAL -->
-  <div id="photo-modal" class="modal-backdrop hidden" onclick="closeModals()">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div class="panel-header">
-        <h3 id="photo-modal-title" class="panel-title">Check Evidence / Screenshots</h3>
-        <button onclick="closeModals()" class="btn btn-outline">Close</button>
-      </div>
-      <div id="photo-modal-meta" style="font-size:12.5px;color:#475569;margin-bottom:12px;background:#f8fafc;padding:10px;border-radius:8px;"></div>
-      <div id="photo-modal-grid" style="display:grid;grid-template-columns:1fr;gap:12px;"></div>
-    </div>
-  </div>
-
-  <!-- TASK MODAL -->
-  <div id="task-modal" class="modal-backdrop hidden">
-    <div class="modal-card">
-      <h3 class="panel-title" style="margin-bottom:14px;">Create New Task</h3>
-      <form onsubmit="submitNewTask(event)">
-        <div class="form-row"><label>Task Name</label><input id="m-task-name" type="text" required class="form-control"></div>
-        <div class="form-row"><label>Assigned To</label><select id="m-task-user" class="form-control"></select></div>
-        <div class="form-row"><label>Priority</label><select id="m-task-priority" class="form-control"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
-        <div class="form-row"><label>Due Date</label><input id="m-task-due" type="date" required class="form-control"></div>
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;">
-          <button type="button" onclick="closeModals()" class="btn btn-outline">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Task</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- INCIDENT MODAL -->
-  <div id="inc-modal" class="modal-backdrop hidden">
-    <div class="modal-card">
-      <h3 class="panel-title" style="margin-bottom:14px;">Log New Incident</h3>
-      <form onsubmit="submitNewIncident(event)">
-        <div class="form-row"><label>Category</label><select id="m-inc-cat" class="form-control"><option>CCTV</option><option>Network</option><option>Printer</option><option>PC</option></select></div>
-        <div class="form-row"><label>Issue Description</label><input id="m-inc-issue" type="text" required class="form-control"></div>
-        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;">
-          <button type="button" onclick="closeModals()" class="btn btn-outline">Cancel</button>
-          <button type="submit" class="btn btn-danger">Log Incident</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
-    const DB_SCHEMA_VERSION = 'v12_mobile_logout_fix_2026';
-    const defaultDB = {
-      schemaVersion: DB_SCHEMA_VERSION,
-      users: [
-        { username: 'yair', password: '123', name: 'Yair Myat Aung', role: 'IT Support' },
-        { username: 'daevid', password: '123', name: 'Dae Vid', role: 'IT Support' },
-        { username: 'thaeei', password: '123', name: 'Thae Ei Mon', role: 'IT Support Specialist' },
-        { username: 'thurein', password: '123', name: 'Thurein Htun', role: 'IT Support Specialist' },
-        { username: 'htet', password: '123', name: 'Htet Aung Khant', role: 'IT Manager' }
-      ],
-      cctvCount: 0,
-      networkCount: 0,
-      dailyChecks: [],
-      tasks: [],
-      incidents: []
-    };
-
-    let savedDB = JSON.parse(localStorage.getItem('it_portal_db') || 'null');
-    if (!savedDB || !savedDB.users || !savedDB.users.some(u => u.username === 'htet')) {
-      savedDB = JSON.parse(JSON.stringify(defaultDB));
-      localStorage.setItem('it_portal_db', JSON.stringify(savedDB));
+  ],
+  "cctvCount": 27,
+  "networkCount": 30,
+  "dailyChecks": [
+    {
+      "date": "15 Oct 2026",
+      "type": "CCTV",
+      "status": "Completed",
+      "remark": "All cameras working normally",
+      "by": "Htet Aung Khant"
+    },
+    {
+      "date": "15 Oct 2026",
+      "type": "CCTV",
+      "status": "Issue Found",
+      "remark": "101 Camera(s) Offline",
+      "by": "Htet Aung Khant"
+    },
+    {
+      "date": "15 Oct 2026",
+      "type": "CCTV",
+      "status": "Completed",
+      "remark": "All cameras working normally",
+      "by": "Yair Myat Aung"
+    },
+    {
+      "date": "15 Oct 2026",
+      "type": "Network",
+      "status": "Completed",
+      "remark": "Speed: 250 Mbps",
+      "by": "Dae Vid"
+    },
+    {
+      "date": "14 Oct 2026",
+      "type": "CCTV",
+      "status": "Issue Found",
+      "remark": "Camera 14 Offline",
+      "by": "Thae Ei Mon"
+    },
+    {
+      "date": "14 Oct 2026",
+      "type": "Network",
+      "status": "Completed",
+      "remark": "Speed: 220 Mbps",
+      "by": "Thurein Htun"
     }
-    let db = savedDB;
-    let currentUser = JSON.parse(localStorage.getItem('it_portal_current_user')) || null;
-    if (currentUser && !db.users.some(u => u.username === currentUser.username)) currentUser = null;
-
-    let cctvImages = [], netImages = [], taskFilter = 'All', incFilter = 'All';
-    let monthlyChartInstance = null, kpiChartInstance = null;
-
-    function toggleMobileSidebar() {
-      document.getElementById('app-sidebar').classList.toggle('open');
+  ],
+  "tasks": [
+    {
+      "no": "TASK-001",
+      "name": "Replace Switch",
+      "assigned": "Yair Myat Aung",
+      "priority": "High",
+      "status": "In Progress",
+      "due": "16 Oct 2026"
+    },
+    {
+      "no": "TASK-002",
+      "name": "Install Printer",
+      "assigned": "Dae Vid",
+      "priority": "Medium",
+      "status": "Open",
+      "due": "17 Oct 2026"
+    },
+    {
+      "no": "TASK-003",
+      "name": "Configure Firewall",
+      "assigned": "Thurein Htun",
+      "priority": "High",
+      "status": "Completed",
+      "due": "15 Oct 2026"
+    },
+    {
+      "no": "TASK-004",
+      "name": "Check Backup",
+      "assigned": "Thae Ei Mon",
+      "priority": "Medium",
+      "status": "In Progress",
+      "due": "16 Oct 2026"
     }
-
-    // --- IMAGE COMPRESSION ---
-    function handleGalleryUpload(e, type) {
-      Array.from(e.target.files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxW = 900;
-            const scale = img.width > maxW ? maxW / img.width : 1;
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-            canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            const compressed = canvas.toDataURL('image/jpeg', 0.78);
-            (type === 'cctv' ? cctvImages : netImages).push(compressed);
-            renderGallery(type);
-          };
-          img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
+  ],
+  "incidents": [
+    {
+      "no": "INC-003",
+      "date": "15 Oct 2026",
+      "category": "CCTV",
+      "issue": "101 Camera(s) Offline",
+      "by": "Htet Aung Khant",
+      "status": "Open"
+    },
+    {
+      "no": "INC-001",
+      "date": "15 Oct 2026",
+      "category": "CCTV",
+      "issue": "Camera 14 Offline",
+      "by": "Thae Ei Mon",
+      "status": "Open"
+    },
+    {
+      "no": "INC-002",
+      "date": "14 Oct 2026",
+      "category": "Network",
+      "issue": "Internet Down",
+      "by": "Dae Vid",
+      "status": "Resolved"
     }
-
-    function renderGallery(type) {
-      const list = type === 'cctv' ? cctvImages : netImages;
-      document.getElementById(`${type}-gallery`).innerHTML = list.map((src, i) => `
-        <div class="gallery-item"><img src="${src}"><button type="button" onclick="removeGalleryImage('${type}', ${i})" class="gallery-remove"><i class="fa-solid fa-xmark"></i></button></div>
-      `).join('');
-    }
-
-    function removeGalleryImage(type, idx) { (type === 'cctv' ? cctvImages : netImages).splice(idx, 1); renderGallery(type); }
-
-    function viewCheckPhotos(idx) {
-      const c = db.dailyChecks[idx];
-      if (!c) return;
-      document.getElementById('photo-modal-title').innerText = `${c.ticket || c.type} - Evidence (${(c.images || []).length} Photos)`;
-      document.getElementById('photo-modal-meta').innerHTML = `
-        <b>Date:</b> ${c.date} | <b>Checked By:</b> ${c.by} | <b>Status:</b> ${c.status}<br>
-        <b>Details:</b> ${c.details || '-'}<br><b>Remark:</b> ${c.remark}
-      `;
-      const imgs = c.images || [];
-      document.getElementById('photo-modal-grid').innerHTML = imgs.length
-        ? imgs.map((src, i) => `
-            <div style="border:1px solid #e2e8f0;border-radius:10px;padding:8px;background:#f8fafc;">
-              <img src="${src}" style="width:100%;border-radius:6px;display:block;">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
-                <span style="font-size:11px;color:#64748b;">Photo #${i + 1}</span>
-                <a href="${src}" download="${c.ticket || 'check'}-photo-${i + 1}.jpg" class="btn btn-outline" style="text-decoration:none;">Download Image</a>
-              </div>
-            </div>`).join('')
-        : `<div class="empty-row">No screenshots attached to this record.</div>`;
-      document.getElementById('photo-modal').classList.remove('hidden');
-    }
-
-    // --- EXPORT FUNCTIONS ---
-    function downloadFile(content, filename, mime) {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([content], { type: mime }));
-      a.download = filename;
-      a.click();
-    }
-
-    function exportChecksReport(filterType, autoPrint) {
-      const list = filterType === 'ALL' ? db.dailyChecks : db.dailyChecks.filter(c => c.type === filterType);
-      if (!list.length) return alert('Export ထုတ်ရန် စာရင်း မရှိသေးပါ!');
-
-      const title = filterType === 'ALL' ? 'Daily Checks (CCTV & Network) Report' : `${filterType} Check Report (with Screenshots)`;
-      const rowsHtml = list.map(c => {
-        const photosHtml = (c.images && c.images.length)
-          ? `<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-               ${c.images.map(src => `<img src="${src}" style="height:150px;border-radius:8px;border:1px solid #cbd5e1;object-fit:cover;">`).join('')}
-             </div>`
-          : `<span style="color:#94a3b8;font-size:12px;">No screenshot</span>`;
-        return `
-          <tr>
-            <td><b>${c.ticket || '-'}</b><br><span style="color:#64748b;font-size:12px;">${c.date}</span></td>
-            <td><b>${c.type}</b></td>
-            <td>${c.details || '-'}</td>
-            <td><b>${c.status}</b></td>
-            <td>${c.remark}<br>${photosHtml}</td>
-            <td>${c.by}</td>
-          </tr>`;
-      }).join('');
-
-      const htmlDoc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
-        <style>
-          body { font-family: 'Segoe UI', sans-serif; padding: 28px; color: #1e293b; }
-          h1 { font-size: 22px; margin-bottom: 4px; }
-          .meta { font-size: 12px; color: #64748b; margin-bottom: 18px; }
-          table { width: 100%; border-collapse: collapse; font-size: 13px; }
-          th, td { border: 1px solid #cbd5e1; padding: 10px; text-align: left; vertical-align: top; }
-          th { background: #f1f5f9; }
-          .print-bar { margin-bottom: 16px; display: flex; gap: 10px; }
-          .btn { padding: 8px 16px; background: #2563eb; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; }
-          @media print { .print-bar { display: none; } }
-        </style></head><body>
-        <div class="print-bar">
-          <button class="btn" onclick="window.print()">Print / Save as PDF</button>
-        </div>
-        <h1>${title}</h1>
-        <div class="meta">Generated on: ${new Date().toLocaleString()} | Total Records: ${list.length}</div>
-        <table>
-          <thead><tr><th>Ticket / Date</th><th>Type</th><th>Technical Details</th><th>Status</th><th>Remarks & Evidence Photos</th><th>Checked By</th></tr></thead>
-          <tbody>${rowsHtml}</tbody>
-        </table>
-      </body></html>`;
-
-      downloadFile(htmlDoc, `${filterType.toLowerCase()}-check-report-with-photos.html`, 'text/html;charset=utf-8');
-      if (autoPrint) {
-        const w = window.open('', '_blank');
-        if (w) { w.document.write(htmlDoc); w.document.close(); }
-      }
-    }
-
-    function exportChecksCSV(filterType) {
-      const list = filterType === 'ALL' ? db.dailyChecks : db.dailyChecks.filter(c => c.type === filterType);
-      if (!list.length) return alert('Export ထုတ်ရန် စာရင်း မရှိသေးပါ!');
-      const rows = [
-        ['Ticket No', 'Date', 'Type', 'Details', 'Status', 'Remark', 'Photos Count', 'Checked By'],
-        ...list.map(c => [c.ticket || '-', c.date, c.type, `"${c.details || ''}"`, c.status, `"${(c.remark || '').replace(/"/g, '""')}"`, (c.images || []).length, c.by])
-      ];
-      downloadFile('\uFEFF' + rows.map(r => r.join(',')).join('\n'), `${filterType.toLowerCase()}-checks.csv`, 'text/csv;charset=utf-8');
-    }
-
-    function exportTasksCSV() {
-      if (!db.tasks.length) return alert('Export ထုတ်ရန် Task မရှိသေးပါ!');
-      const rows = [
-        ['Task No', 'Task Name', 'Assigned To', 'Priority', 'Status', 'Due Date'],
-        ...db.tasks.map(t => [t.no, `"${t.name.replace(/"/g, '""')}"`, t.assigned, t.priority, t.status, t.due])
-      ];
-      downloadFile('\uFEFF' + rows.map(r => r.join(',')).join('\n'), 'tasks-report.csv', 'text/csv;charset=utf-8');
-    }
-
-    function exportTasksReport() {
-      if (!db.tasks.length) return alert('Export ထုတ်ရန် Task မရှိသေးပါ!');
-      const rowsHtml = db.tasks.map(t => `<tr><td><b>${t.no}</b></td><td>${t.name}</td><td>${t.assigned}</td><td>${t.priority}</td><td>${t.status}</td><td>${t.due}</td></tr>`).join('');
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Task Management Report</title>
-        <style>body{font-family:sans-serif;padding:28px;}table{width:100%;border-collapse:collapse;margin-top:14px;}th,td{border:1px solid #cbd5e1;padding:10px;text-align:left;}th{background:#f1f5f9;}</style></head>
-        <body><h2>IT Task Management Report</h2><p>Generated: ${new Date().toLocaleString()}</p>
-        <table><thead><tr><th>Task No</th><th>Task Name</th><th>Assigned To</th><th>Priority</th><th>Status</th><th>Due Date</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
-      downloadFile(html, 'task-management-report.html', 'text/html;charset=utf-8');
-    }
-
-    function exportIncidentsCSV() {
-      if (!db.incidents.length) return alert('Export ထုတ်ရန် Incident မရှိသေးပါ!');
-      const rows = [
-        ['Incident No', 'Date', 'Category', 'Issue', 'Logged By', 'Status'],
-        ...db.incidents.map(i => [i.no, i.date, i.category, `"${i.issue.replace(/"/g, '""')}"`, i.by || '', i.status])
-      ];
-      downloadFile('\uFEFF' + rows.map(r => r.join(',')).join('\n'), 'incidents-log.csv', 'text/csv;charset=utf-8');
-    }
-
-    function exportIncidentsReport() {
-      if (!db.incidents.length) return alert('Export ထုတ်ရန် Incident မရှိသေးပါ!');
-      const rowsHtml = db.incidents.map(i => `<tr><td><b>${i.no}</b></td><td>${i.date}</td><td>${i.category}</td><td>${i.issue}</td><td>${i.by || '-'}</td><td>${i.status}</td></tr>`).join('');
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Incident Log Report</title>
-        <style>body{font-family:sans-serif;padding:28px;}table{width:100%;border-collapse:collapse;margin-top:14px;}th,td{border:1px solid #cbd5e1;padding:10px;text-align:left;}th{background:#f1f5f9;}</style></head>
-        <body><h2>IT Incident Log Report</h2><p>Generated: ${new Date().toLocaleString()}</p>
-        <table><thead><tr><th>Incident No</th><th>Date</th><th>Category</th><th>Issue</th><th>Logged By</th><th>Status</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
-      downloadFile(html, 'incident-log-report.html', 'text/html;charset=utf-8');
-    }
-
-    function getKPISummaryRows() {
-      return db.users.map(u => {
-        const cctv = db.dailyChecks.filter(c => c.by === u.name && c.type === 'CCTV').length;
-        const net = db.dailyChecks.filter(c => c.by === u.name && c.type === 'Network').length;
-        const tasks = db.tasks.filter(t => t.assigned === u.name && t.status === 'Completed').length;
-        const inc = db.incidents.filter(i => i.by === u.name).length;
-        const score = (cctv + net + tasks) === 0 ? 0 : Math.min(100, Math.round(((cctv + net + tasks) / 30) * 100));
-        return { name: u.name, role: u.role, cctv, net, tasks, inc, score: `${score}%` };
-      });
-    }
-
-    function exportKPICSV() {
-      const kpiRows = getKPISummaryRows();
-      const rows = [
-        ['Staff Name', 'Role', 'CCTV Checks', 'Network Checks', 'Tasks Completed', 'Incidents Logged', 'KPI Score'],
-        ...kpiRows.map(r => [r.name, r.role, r.cctv, r.net, r.tasks, r.inc, r.score])
-      ];
-      downloadFile('\uFEFF' + rows.map(r => r.join(',')).join('\n'), 'team-kpi-report.csv', 'text/csv;charset=utf-8');
-    }
-
-    function exportKPIReport() {
-      const kpiRows = getKPISummaryRows();
-      const rowsHtml = kpiRows.map(r => `<tr><td><b>${r.name}</b></td><td>${r.role}</td><td>${r.cctv}</td><td>${r.net}</td><td>${r.tasks}</td><td>${r.inc}</td><td><b>${r.score}</b></td></tr>`).join('');
-      const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Team KPI Report</title>
-        <style>body{font-family:sans-serif;padding:28px;}table{width:100%;border-collapse:collapse;margin-top:14px;}th,td{border:1px solid #cbd5e1;padding:10px;text-align:left;}th{background:#f1f5f9;}</style></head>
-        <body><h2>IT Team KPI Performance Report</h2><p>Generated: ${new Date().toLocaleString()}</p>
-        <table><thead><tr><th>Staff Name</th><th>Role</th><th>CCTV Checks</th><th>Network Checks</th><th>Tasks Completed</th><th>Incidents Logged</th><th>Score</th></tr></thead><tbody>${rowsHtml}</tbody></table></body></html>`;
-      downloadFile(html, 'team-kpi-report.html', 'text/html;charset=utf-8');
-    }
-
-    function exportFullPortalReport() {
-      exportChecksReport('ALL', true);
-    }
-
-    // --- NATIVE PHONE APK & LAPTOP .EXE LAUNCHER ---
-    function saveAppConfig() {
-      localStorage.setItem('cctv_app_cfg', JSON.stringify({
-        hik: document.getElementById('pkg-hik').value.trim(),
-        exeSeetong: document.getElementById('exe-seetong').value.trim(),
-        exeImou: document.getElementById('exe-imou').value.trim(),
-        exeHik: document.getElementById('exe-hik').value.trim()
-      }));
-      alert('Saved!');
-    }
-
-    function launchNativeApp(appKey) {
-      const saved = JSON.parse(localStorage.getItem('cctv_app_cfg') || '{}');
-      const apps = {
-        seetong: { androidPkg: 'com.seetong.app', iosScheme: 'seetong://', pcProtocol: 'seetong://' },
-        imou: { androidPkg: 'com.mm.android.lc', iosScheme: 'imoulife://', pcProtocol: 'imoulife://' },
-        hikconnect: { androidPkg: saved.hik || 'com.connect.enduser', iosScheme: 'hikconnect://', pcProtocol: 'hikconnect://' }
-      };
-      const target = apps[appKey];
-      if (!target) return;
-      const ua = navigator.userAgent || '';
-      if (/Android/i.test(ua)) {
-        window.location.href = `intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package=${target.androidPkg};end`;
-      } else if (/iPhone|iPad|iPod/i.test(ua)) {
-        window.location.href = target.iosScheme;
-      } else {
-        window.location.href = target.pcProtocol;
-      }
-    }
-
-    function copyLaptopCmdSetup() {
-      const sExe = (document.getElementById('exe-seetong')?.value.trim() || 'C:\\Program Files (x86)\\Seetong\\Seetong.exe').replace(/"/g, '');
-      const iExe = (document.getElementById('exe-imou')?.value.trim() || 'C:\\Program Files (x86)\\Imou\\Imou.exe').replace(/"/g, '');
-      const hExe = (document.getElementById('exe-hik')?.value.trim() || 'C:\\Program Files (x86)\\Hikvision\\iVMS-4200 Site\\iVMS-4200 Client\\Client\\iVMS-4200.Framework.C.exe').replace(/"/g, '');
-
-      const cmdText = [
-        `reg add "HKCU\\Software\\Classes\\seetong" /ve /d "URL:Seetong EXE" /f & reg add "HKCU\\Software\\Classes\\seetong" /v "URL Protocol" /d "" /f & reg add "HKCU\\Software\\Classes\\seetong\\shell\\open\\command" /ve /d "\\"${sExe}\\"" /f`,
-        `reg add "HKCU\\Software\\Classes\\imoulife" /ve /d "URL:IMOU EXE" /f & reg add "HKCU\\Software\\Classes\\imoulife" /v "URL Protocol" /d "" /f & reg add "HKCU\\Software\\Classes\\imoulife\\shell\\open\\command" /ve /d "\\"${iExe}\\"" /f`,
-        `reg add "HKCU\\Software\\Classes\\hikconnect" /ve /d "URL:Hik-Connect EXE" /f & reg add "HKCU\\Software\\Classes\\hikconnect" /v "URL Protocol" /d "" /f & reg add "HKCU\\Software\\Classes\\hikconnect\\shell\\open\\command" /ve /d "\\"${hExe}\\"" /f`
-      ].join('\r\n');
-
-      navigator.clipboard.writeText(cmdText);
-      alert('Laptop .EXE Setup Command ကို Copy ကူးပြီးပါပြီ!\n\n၁။ ကီးဘုတ်မှ Win + R ကိုနှိပ်ပြီး cmd ဟုရိုက်ကာ Enter ခေါက်ပါ။\n၂။ ပွင့်လာသော အမည်းရောင် CMD အကွက်ထဲတွင် Right-Click နှိပ်၍ Paste ချပြီး Enter ခေါက်လိုက်ပါ။');
-    }
-
-    async function resetToCleanProduction() {
-      if (!isManager()) return requireManagerAlert();
-      if (!confirm('စာရင်းများအားလုံးကို ဖျက်ပြီး အသစ်စက်စက် (0) မှ ပြန်စရန် သေချာပါသလား?')) return;
-      db.cctvCount = 0; db.networkCount = 0; db.dailyChecks = []; db.tasks = []; db.incidents = [];
-      db.schemaVersion = DB_SCHEMA_VERSION;
-      localStorage.setItem('it_portal_db', JSON.stringify(db));
-      renderAll(); await pushToGitHub();
-    }
-
-    function isManager() { return currentUser && currentUser.role === 'IT Manager'; }
-    function requireManagerAlert() { alert('IT Manager (Htet Aung Khant) တစ်ဦးတည်းသာ ပြင်ဆင်ခွင့်နှင့် ဖျက်ခွင့် ရှိပါသည်။'); }
-    function getInitials(n) { return (n || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(); }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const u = document.getElementById('login-username').value.trim().toLowerCase();
-      const p = document.getElementById('login-password').value.trim();
-      const found = db.users.find(a => a.username.toLowerCase() === u && a.password === p);
-      if (!found) { document.getElementById('login-error').classList.remove('hidden'); return; }
-      document.getElementById('login-error').classList.add('hidden');
-      currentUser = found;
-      localStorage.setItem('it_portal_current_user', JSON.stringify(currentUser));
-      applyLoggedInUser();
-    }
-
-    function applyLoggedInUser() {
-      if (!currentUser) { document.getElementById('login-screen').classList.remove('hidden'); return; }
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('active-user-name').innerText = currentUser.name;
-      document.getElementById('active-user-role').innerText = currentUser.role;
-      document.getElementById('active-user-avatar').innerText = getInitials(currentUser.name);
-
-      const rb = document.getElementById('role-permission-badge');
-      rb.className = isManager() ? 'role-indicator role-manager' : 'role-indicator role-staff';
-      rb.innerHTML = isManager() ? '<i class="fa-solid fa-crown"></i> Manager' : '<i class="fa-solid fa-lock"></i> Staff';
-
-      document.getElementById('manager-add-user-form')?.classList.toggle('hidden', !isManager());
-      document.getElementById('manager-clear-data-btn')?.classList.toggle('hidden', !isManager());
-
-      document.getElementById('cctv-by').value = currentUser.name;
-      document.getElementById('net-by').value = currentUser.name;
-      renderAll();
-    }
-
-    function handleLogout() {
-      currentUser = null;
-      localStorage.removeItem('it_portal_current_user');
-      document.getElementById('login-password').value = '';
-      document.getElementById('app-sidebar')?.classList.remove('open');
-      document.getElementById('login-screen').classList.remove('hidden');
-    }
-
-    async function addUserAccount(e) {
-      e.preventDefault();
-      if (!isManager()) return requireManagerAlert();
-      const name = document.getElementById('new-u-name').value.trim();
-      const username = document.getElementById('new-u-user').value.trim().toLowerCase();
-      const password = document.getElementById('new-u-pass').value.trim();
-      const role = document.getElementById('new-u-role').value;
-      if (db.users.some(u => u.username.toLowerCase() === username)) return alert('Username ရှိပြီးသားဖြစ်ပါသည်!');
-      db.users.push({ username, password, name, role });
-      document.getElementById('new-u-name').value = '';
-      document.getElementById('new-u-user').value = '';
-      document.getElementById('new-u-pass').value = '';
-      renderAll(); await pushToGitHub();
-    }
-
-    async function editUserAccount(idx) {
-      if (!isManager()) return requireManagerAlert();
-      const u = db.users[idx];
-      const name = prompt('Edit Full Name:', u.name); if (!name) return;
-      const password = prompt('Edit Password:', u.password); if (!password) return;
-      const role = prompt('Edit Role:', u.role); if (!role) return;
-      db.users[idx] = { ...u, name: name.trim(), password: password.trim(), role: role.trim() };
-      renderAll(); await pushToGitHub();
-    }
-
-    async function deleteUserAccount(idx) {
-      if (!isManager()) return requireManagerAlert();
-      if (db.users.length <= 1) return;
-      if (!confirm(`${db.users[idx].name} အကောင့်ကို ဖျက်ရန် သေချာပါသလား?`)) return;
-      db.users.splice(idx, 1);
-      renderAll(); await pushToGitHub();
-    }
-
-    function renderUsersList() {
-      const tbody = document.getElementById('users-tbody');
-      if (tbody) {
-        tbody.innerHTML = db.users.map((u, idx) => `
-          <tr>
-            <td><span class="mini-avatar">${getInitials(u.name)}</span><b>${u.name}</b></td>
-            <td><code>${u.username}</code></td>
-            <td><code>${isManager() ? u.password : '••••••'}</code></td>
-            <td><span class="badge ${u.role === 'IT Manager' ? 'b-amber' : 'b-blue'}">${u.role}</span></td>
-            <td>${isManager()
-              ? `<button onclick="editUserAccount(${idx})" class="action-btn action-
+  ]
+}
