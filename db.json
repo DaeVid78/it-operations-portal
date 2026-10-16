@@ -32,9 +32,19 @@
       "role": "IT Manager"
     }
   ],
-  "cctvCount": 27,
+  "cctvCount": 28,
   "networkCount": 30,
   "dailyChecks": [
+    {
+      "ticket": "CCTV-20261016-028",
+      "date": "16 Oct 2026",
+      "type": "CCTV",
+      "details": "Total: 0 | Working: 0 | Offline: 0",
+      "status": "Completed",
+      "remark": "All cameras working normally",
+      "images": [],
+      "by": "Dae Vid"
+    },
     {
       "date": "15 Oct 2026",
       "type": "CCTV",
