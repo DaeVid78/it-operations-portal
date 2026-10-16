@@ -33,8 +33,16 @@
     }
   ],
   "cctvCount": 0,
-  "networkCount": 0,
-  "dailyChecks": [],
+  "networkCount": 1,
+  "dailyChecks": [
+    {
+      "date": "16 Oct 2026",
+      "type": "Network",
+      "status": "Completed",
+      "remark": "Speed: 100 Mbps",
+      "by": "Dae Vid"
+    }
+  ],
   "tasks": [],
   "incidents": []
 }
